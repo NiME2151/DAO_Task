@@ -1,3 +1,5 @@
+package entities;
+
 public interface IAdresse {
 
     String getStrasse();

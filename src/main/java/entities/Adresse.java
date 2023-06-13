@@ -1,3 +1,5 @@
+package entities;
+
 public class Adresse implements IAdresse {
 
     private String strasse;
@@ -54,7 +56,7 @@ public class Adresse implements IAdresse {
 
     @Override
     public String toString() {
-        return "Adresse{" +
+        return "entities.Adresse{" +
                 "strasse='" + strasse + '\'' +
                 ", hausNr='" + hausNr + '\'' +
                 ", plz='" + plz + '\'' +
