@@ -1,3 +1,5 @@
+package kaufvertrag.dataLayer.dataAccessObjects;
+
 import java.util.List;
 
 public interface IDao<T, K> {

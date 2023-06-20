@@ -1,3 +1,5 @@
+package kaufvertrag.exceptions;
+
 public class DaoException extends RuntimeException {
 
     private String message;

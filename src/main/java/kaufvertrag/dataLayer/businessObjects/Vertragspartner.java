@@ -1,4 +1,7 @@
-package entities;
+package kaufvertrag.dataLayer.businessObjects;
+
+import kaufvertrag.businessObjects.IAdresse;
+import kaufvertrag.businessObjects.IVertragspartner;
 
 public class Vertragspartner implements IVertragspartner {
 

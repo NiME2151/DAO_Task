@@ -1,4 +1,6 @@
-package entities;
+package kaufvertrag.dataLayer.businessObjects;
+
+import kaufvertrag.businessObjects.IWare;
 
 import java.util.List;
 

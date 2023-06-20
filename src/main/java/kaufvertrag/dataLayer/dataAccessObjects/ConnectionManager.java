@@ -1,3 +1,7 @@
+package kaufvertrag.dataLayer.dataAccessObjects;
+
+import kaufvertrag.exceptions.DaoException;
+
 import java.sql.*;
 
 public class ConnectionManager {

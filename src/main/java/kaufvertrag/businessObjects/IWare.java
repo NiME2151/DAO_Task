@@ -1,4 +1,4 @@
-package entities;
+package kaufvertrag.businessObjects;
 
 import java.util.List;
 

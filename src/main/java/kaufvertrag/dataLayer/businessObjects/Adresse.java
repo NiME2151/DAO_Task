@@ -1,4 +1,6 @@
-package entities;
+package kaufvertrag.dataLayer.businessObjects;
+
+import kaufvertrag.businessObjects.IAdresse;
 
 public class Adresse implements IAdresse {
 
@@ -56,7 +58,7 @@ public class Adresse implements IAdresse {
 
     @Override
     public String toString() {
-        return "entities.Adresse{" +
+        return "kaufvertrag.dataLayer.businessObjects.Adresse{" +
                 "strasse='" + strasse + '\'' +
                 ", hausNr='" + hausNr + '\'' +
                 ", plz='" + plz + '\'' +
