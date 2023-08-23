@@ -1,0 +1,13 @@
+<product>
+    <id>2911</id>
+    <bezeichnung>Macbook</bezeichnung>
+    <beschreibung>A Macbook</beschreibung>
+    <preis>1299.99</preis>
+    <besonderheiten>
+        <besonderheit>Insane processor</besonderheit>
+        <besonderheit>Silver Design</besonderheit>
+    </besonderheiten>
+    <maengel>
+        <maengel>It is an Apple device</maengel>
+    </maengel>
+</product>
