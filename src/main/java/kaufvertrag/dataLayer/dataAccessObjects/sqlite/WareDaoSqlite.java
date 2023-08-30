@@ -8,9 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class WareDaoSqlite implements IDao<Ware, Long> {
 
@@ -117,12 +115,60 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
     
 
     @Override
-    public void update(Ware objectToUpdate) {
+    public void update(Ware objectToUpdate) throws DaoException {
+        PreparedStatement statement;
+        try {
+            ConnectionManager.getNewConnection();
+            Ware ware = read(objectToUpdate.getId());
+            List <String> aenderungen = getUnterschiedeInWaren(ware, objectToUpdate);
+            
+            if (aenderungen.isEmpty()){
+                return;
+            }
 
+            StringBuilder sql = new StringBuilder("UPDATE Ware SET ");
+            int i = 0;
+            for (String aenderung: aenderungen) {
+                if (i > 0){
+                    sql.append(", ");
+                }
+                sql.append(aenderung);
+                i++;
+            }
+            statement = ConnectionManager.getExistingConnection().prepareStatement(String.valueOf(sql));
+            statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException(e.getMessage());
+        } 
     }
-
-    @Override
+        
+        
+        @Override
     public void delete(Long id) {
 
+    }
+    
+    private List<String> getUnterschiedeInWaren(Ware ware, Ware objectToUpdate) {
+        List<String> unterschiede = new ArrayList<>();
+        
+        if (ware.equals(objectToUpdate)){
+            return unterschiede;
+        }
+        if (!ware.getBeschreibung().equals(objectToUpdate.getBeschreibung())){
+            unterschiede.add("beschreibung =" + objectToUpdate.getBeschreibung());
+        }
+        if (!ware.getBezeichnung().equals(objectToUpdate.getBezeichnung())){
+            unterschiede.add("bezeichnung =" + objectToUpdate.getBezeichnung());
+        }
+        if (!(ware.getPreis() == objectToUpdate.getPreis())){
+            unterschiede.add("preis =" + objectToUpdate.getPreis());
+        }
+        if (!ware.getBesonderheiten().equals(objectToUpdate.getBesonderheiten())){
+            unterschiede.add("besonderheiten =" + objectToUpdate.getBesonderheiten().toString());
+        }
+        if (!ware.getMaengel().equals(objectToUpdate.getMaengel())){
+            unterschiede.add("maengel =" + objectToUpdate.getMaengel().toString());
+        }
+        return unterschiede;
     }
 }
