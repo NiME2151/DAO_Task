@@ -3,14 +3,12 @@ package kaufvertrag.dataLayer.businessObjects;
 import kaufvertrag.businessObjects.IAdresse;
 import kaufvertrag.businessObjects.IVertragspartner;
 
-import javax.xml.bind.annotation.XmlElement;
-
 public class Vertragspartner implements IVertragspartner {
 
     private String ausweisNr;
     private String vorname;
     private String nachname;
-    private IAdresse adresse;
+    private Adresse adresse;
 
     public Vertragspartner(String vorname, String nachname) {
         this.vorname = vorname;
@@ -18,7 +16,6 @@ public class Vertragspartner implements IVertragspartner {
     }
 
     @Override
-    @XmlElement(name = "ausweis_nr")
     public String getAusweisNr() {
         return ausweisNr;
     }
@@ -29,7 +26,6 @@ public class Vertragspartner implements IVertragspartner {
     }
 
     @Override
-    @XmlElement(name = "vorname")
     public String getVorname() {
         return vorname;
     }
@@ -40,7 +36,6 @@ public class Vertragspartner implements IVertragspartner {
     }
 
     @Override
-    @XmlElement(name = "nachname")
     public String getNachname() {
         return nachname;
     }
@@ -51,13 +46,12 @@ public class Vertragspartner implements IVertragspartner {
     }
 
     @Override
-    @XmlElement(name = "adresse", type = Adresse.class)
     public IAdresse getAdresse() {
         return adresse;
     }
 
     @Override
-    public void setAdresse(IAdresse adresse) {
+    public void setAdresse(Adresse adresse) {
         this.adresse = adresse;
     }
 }

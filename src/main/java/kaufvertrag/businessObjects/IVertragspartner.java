@@ -1,5 +1,7 @@
 package kaufvertrag.businessObjects;
 
+import kaufvertrag.dataLayer.businessObjects.Adresse;
+
 public interface IVertragspartner {
 
     String getAusweisNr();
@@ -9,5 +11,5 @@ public interface IVertragspartner {
     String getNachname();
     void setNachname(String nachname);
     IAdresse getAdresse();
-    void setAdresse(IAdresse adresse);
+    void setAdresse(Adresse adresse);
 }

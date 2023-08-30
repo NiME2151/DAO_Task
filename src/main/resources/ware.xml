@@ -1,4 +1,4 @@
-<product>
+<ware>
     <id>2911</id>
     <bezeichnung>Macbook</bezeichnung>
     <beschreibung>A Macbook</beschreibung>
@@ -10,4 +10,4 @@
     <maengel>
         <maengel>It is an Apple device</maengel>
     </maengel>
-</product>
+</ware>
