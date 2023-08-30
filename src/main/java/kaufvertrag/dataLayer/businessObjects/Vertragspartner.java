@@ -17,6 +17,8 @@ public class Vertragspartner implements IVertragspartner {
         this.nachname = nachname;
     }
 
+    public Vertragspartner(){};
+
     @Override
     @XmlElement(name = "ausweis_nr")
     public String getAusweisNr() {
@@ -59,5 +61,13 @@ public class Vertragspartner implements IVertragspartner {
     @Override
     public void setAdresse(IAdresse adresse) {
         this.adresse = adresse;
+    }
+
+    @Override
+    public String toString() {
+        String text = vorname + " " + nachname;
+        text += "\n\t\tAusweisNr: " + ausweisNr;
+        text += "\n\t\tAdresse: " + adresse;
+        return text;
     }
 }

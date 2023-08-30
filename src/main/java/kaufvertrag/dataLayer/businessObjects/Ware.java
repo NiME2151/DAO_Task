@@ -69,13 +69,12 @@ public class Ware implements IWare {
 
     @Override
     public String toString() {
-        return "Ware{" +
-                "id=" + id +
-                ", bezeichnung='" + bezeichnung + '\'' +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", preis=" + preis +
-                ", besonderheiten=" + besonderheiten +
-                ", maengel=" + maengel +
-                '}';
+        String text = "\n\t\tBezeichnung: " + bezeichnung;
+        text += "\n\t\tID: " + id;
+        text += "\n\t\tBeschreibung: " + beschreibung;
+        text += "\n\t\tPreis: " + preis;
+        text += "\n\t\tBesonderheiten: " + besonderheiten.toString();
+        text += "\n\t\tMängel: " + maengel.toString();
+        return text;
     }
 }

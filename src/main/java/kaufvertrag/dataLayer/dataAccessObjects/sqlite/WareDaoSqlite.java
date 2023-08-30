@@ -1,6 +1,5 @@
 package kaufvertrag.dataLayer.dataAccessObjects.sqlite;
 
-import kaufvertrag.businessObjects.IWare;
 import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.exceptions.DaoException;
@@ -9,15 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class WareDaoSqlite implements IDao<IWare, Long> {
+public class WareDaoSqlite implements IDao<Ware, Long> {
 
     @Override
-    public IWare create() {
+    public Ware create() {
         return (new Ware("", 0.0));
     }
 
     @Override
-    public void create(IWare objectToInsert) throws DaoException {
+    public void create(Ware objectToInsert) throws DaoException {
         ConnectionManager.getNewConnection();
 
         String bezeichnung = objectToInsert.getBezeichnung();
@@ -25,10 +24,11 @@ public class WareDaoSqlite implements IDao<IWare, Long> {
         double preis = objectToInsert.getPreis();
         String besonderheiten = objectToInsert.getBesonderheiten().toString();
         String maengel = objectToInsert.getMaengel().toString();
+        PreparedStatement statement;
 
         String sql = "INSERT INTO Ware (bezeichnung, beschreibung, preis, besonderheiten, maengel) VALUES (?,?,?,?,?)";
         try {
-            PreparedStatement statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
+            statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
             statement.setString(1,bezeichnung);
             statement.setString(2,beschreibung);
             statement.setDouble(3,preis);
@@ -41,22 +41,22 @@ public class WareDaoSqlite implements IDao<IWare, Long> {
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
-        ConnectionManager.close();
+        ConnectionManager.close(null, statement , ConnectionManager.getExistingConnection());
     }
 
     @Override
-    public IWare read(Long id) {
+    public Ware read(Long id) {
 
         return null;
     }
 
     @Override
-    public List<IWare> readAll() {
+    public List<Ware> readAll() {
         return null;
     }
 
     @Override
-    public void update(IWare objectToUpdate) {
+    public void update(Ware objectToUpdate) {
 
     }
 

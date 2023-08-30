@@ -8,8 +8,8 @@ public interface IDao<T, K> {
 
     T create();
     void create(T objectToInsert) throws DaoException;
-    T read(K id);
-    List<T> readAll();
-    void update(T objectToUpdate);
+    T read(K id) throws DaoException;
+    List<T> readAll() throws DaoException;
+    void update(T objectToUpdate) throws DaoException;
     void delete(K id);
 }

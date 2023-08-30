@@ -1,6 +1,6 @@
 package kaufvertrag.dataLayer.dataAccessObjects.xml;
 
-import kaufvertrag.businessObjects.IWare;
+import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.exceptions.DaoException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 public class ServiceXml{
     
-    private static void createXMLDoc(IWare ware) throws DaoException, ParserConfigurationException {
+    private static void createXMLDoc(Ware ware) throws DaoException, ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         
