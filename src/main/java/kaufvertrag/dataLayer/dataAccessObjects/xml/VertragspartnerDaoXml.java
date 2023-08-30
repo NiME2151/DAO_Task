@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
+public  class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
 
     @Override
     public IVertragspartner create() {
@@ -20,7 +20,7 @@ public class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
     }
 
     @Override
-    public void create(IVertragspartner objectToInsert) {
+    public void create(IVertragspartner objectToInsert) throws DaoException {
         File outputXmlFile = new File("src/main/resources/" + objectToInsert.getAusweisNr() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
@@ -33,7 +33,7 @@ public class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
     }
 
     @Override
-    public IVertragspartner read(String id) {
+    public IVertragspartner read(String id) throws DaoException {
         File inputXmlFile = new File("src/main/resources/" + id + ".xml");
         Vertragspartner vertragspartner;
         try {
@@ -49,7 +49,7 @@ public class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
     }
 
     @Override
-    public List<IVertragspartner> readAll() {
+    public List<IVertragspartner> readAll() throws DaoException {
         File[] xmlFiles = new File("src/main/resources/").listFiles();
         List<IVertragspartner> vertragspartners = new ArrayList<>();
         try {
@@ -68,7 +68,7 @@ public class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
     }
 
     @Override
-    public void update(IVertragspartner objectToUpdate) {
+    public void update(IVertragspartner objectToUpdate) throws DaoException {
         File xmltobeUpdated = new File("src/main/resources/" + objectToUpdate.getAusweisNr() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);

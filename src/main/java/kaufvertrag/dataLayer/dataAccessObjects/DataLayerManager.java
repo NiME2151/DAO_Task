@@ -1,34 +1,36 @@
 package kaufvertrag.dataLayer.dataAccessObjects;
 
+import kaufvertrag.dataLayer.dataAccessObjects.sqlite.DataLayerSqlite;
 import kaufvertrag.dataLayer.dataAccessObjects.xml.DataLayerXml;
 import kaufvertrag.exceptions.DaoException;
 
+import java.util.Scanner;
+
 public class DataLayerManager {
 
-    private static DataLayerManager instance;
-    public String persistenceType;
+    private static DataLayerManager dataLayerManager;
 
-    private DataLayerManager() {}
-
-    public static DataLayerManager getInstance() {
-        if (instance == null) {
-            instance = new DataLayerManager();
-
-        }
-        return instance;
+    private DataLayerManager() {
     }
 
-    public IDataLayer getDataLayer() {
-        if (instance.readPersistenceType().equalsIgnoreCase("xml")) {
-            return new DataLayerXml();
+    public static DataLayerManager getInstance() {
+        if (dataLayerManager == null) {
+            dataLayerManager = new DataLayerManager();
         }
-        else if (instance.readPersistenceType().equalsIgnoreCase("sqlite")){
-//            return new DataLayerSqlite();
-        }
-        throw new DaoException("persistence type not valid");
+        return dataLayerManager;
+    }
+
+    public IDataLayer getDataLayer() throws DaoException {
+        return switch (readPersistenceType()) {
+            case "xml" -> new DataLayerXml();
+            case "sqlite" -> new DataLayerSqlite();
+            default -> throw new DaoException("persistence type not valid");
+        };
     }
 
     private String readPersistenceType() {
-        return instance.persistenceType;
+        System.out.println("Enter \"xml\" or \"sqlite\" as Persistance Type");
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
     }
 }

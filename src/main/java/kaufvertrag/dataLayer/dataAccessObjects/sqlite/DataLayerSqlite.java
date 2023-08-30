@@ -1,10 +1,10 @@
-package kaufvertrag.dataLayer.dataAccessObjects.xml;
+package kaufvertrag.dataLayer.dataAccessObjects.sqlite;
 
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
 import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
 import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
 
-public class DataLayerXml implements IDataLayer {
+public class DataLayerSqlite implements IDataLayer {
 
     @Override
     public IVertragspartnerDao getVertragspartnerDao() {
