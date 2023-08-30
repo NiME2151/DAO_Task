@@ -6,44 +6,44 @@ import kaufvertrag.businessObjects.IWare;
 
 public class Kaufvertrag implements IKaufvertrag {
 
-    private IVertragspartner verkaeufer;
-    private IVertragspartner kaeufer;
-    private IWare ware;
+    private Vertragspartner verkaeufer;
+    private Vertragspartner kaeufer;
+    private Ware ware;
     private String zahlungsModalitaeten;
 
-    public Kaufvertrag(IVertragspartner verkaeufer, IVertragspartner kaeufer, IWare ware) {
+    public Kaufvertrag(Vertragspartner verkaeufer, Vertragspartner kaeufer, Ware ware) {
         this.verkaeufer = verkaeufer;
         this.kaeufer = kaeufer;
         this.ware = ware;
     }
 
     @Override
-    public IVertragspartner getVerkaeufer() {
+    public Vertragspartner getVerkaeufer() {
         return verkaeufer;
     }
 
     @Override
-    public void setVerkaeufer(IVertragspartner verkaeufer) {
+    public void setVerkaeufer(Vertragspartner verkaeufer) {
         this.verkaeufer = verkaeufer;
     }
 
     @Override
-    public IVertragspartner getKaeufer() {
+    public Vertragspartner getKaeufer() {
         return kaeufer;
     }
 
     @Override
-    public void setKaeufer(IVertragspartner kaeufer) {
+    public void setKaeufer(Vertragspartner kaeufer) {
         this.kaeufer = kaeufer;
     }
 
     @Override
-    public IWare getWare() {
+    public Ware getWare() {
         return ware;
     }
 
     @Override
-    public void setWare(IWare ware) {
+    public void setWare(Ware ware) {
         this.ware = ware;
     }
 
@@ -55,5 +55,16 @@ public class Kaufvertrag implements IKaufvertrag {
     @Override
     public void setZahlungsModalitaeten(String zahlungsModalitaeten) {
         this.zahlungsModalitaeten = zahlungsModalitaeten;
+    }
+
+    @Override
+    public String toString() {
+        String text = "Kaufvertrag: ";
+        text += "\n\tVerkäufer: " + verkaeufer;
+        text += "\n\tKäufer: " + kaeufer;
+        text += "\n\tWare: " + ware;
+        text += "\n\tZahlungsmodalitäten: ";
+        text += "\n\t\t" + zahlungsModalitaeten;
+        return text;
     }
 }
