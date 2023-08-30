@@ -1,20 +1,21 @@
 package kaufvertrag.dataLayer.dataAccessObjects.xml;
 
+import kaufvertrag.businessObjects.IWare;
 import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 
 import java.util.List;
 
-public class WareDaoXml implements IDao<Ware, Long> {
+public class WareDaoXml implements IDao<IWare, Long> {
 
 
     @Override
-    public Ware create() {
+    public IWare create() {
         return null;
     }
 
     @Override
-    public void create(Ware objectToInsert){
+    public void create(IWare objectToInsert){
     }
 
     @Override
@@ -23,12 +24,12 @@ public class WareDaoXml implements IDao<Ware, Long> {
     }
 
     @Override
-    public List<Ware> readAll() {
+    public List<IWare> readAll() {
         return null;
     }
 
     @Override
-    public void update(Ware objectToUpdate) {
+    public void update(IWare objectToUpdate) {
 
     }
 

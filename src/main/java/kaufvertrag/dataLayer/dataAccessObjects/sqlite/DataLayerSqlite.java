@@ -1,18 +1,19 @@
 package kaufvertrag.dataLayer.dataAccessObjects.sqlite;
 
+import kaufvertrag.businessObjects.IVertragspartner;
+import kaufvertrag.businessObjects.IWare;
+import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
-import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
-import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
 
 public class DataLayerSqlite implements IDataLayer {
 
     @Override
-    public IVertragspartnerDao getVertragspartnerDao() {
+    public IDao<IVertragspartner, String> getVertragspartnerDao() {
         return null;
     }
 
     @Override
-    public IWareDao getWareDao() {
+    public IDao<IWare, Long> getWareDao() {
         return null;
     }
 }

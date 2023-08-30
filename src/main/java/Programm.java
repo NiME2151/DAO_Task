@@ -1,7 +1,9 @@
 import kaufvertrag.businessObjects.IAdresse;
 import kaufvertrag.businessObjects.IVertragspartner;
 import kaufvertrag.dataLayer.businessObjects.Adresse;
+import kaufvertrag.dataLayer.businessObjects.Vertragspartner;
 import kaufvertrag.dataLayer.dataAccessObjects.DataLayerManager;
+import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
 import kaufvertrag.dataLayer.dataAccessObjects.xml.VertragspartnerDaoXml;
 import kaufvertrag.exceptions.DaoException;
@@ -14,7 +16,7 @@ public class Programm {
         IDataLayer dataLayer = dataLayerManager.getDataLayer();
 
         // case xml
-    /*    VertragspartnerDaoXml vertragspartnerDaoXml = dataLayer.getDaoVertragspartner();
+        IDao<IVertragspartner, String> vertragspartnerDaoXml = dataLayer.getVertragspartnerDao();
 
         IVertragspartner vertragspartner = vertragspartnerDaoXml.create();
         vertragspartner.setVorname("Nico");
@@ -28,5 +30,5 @@ public class Programm {
         );
         vertragspartner.setAdresse(adresse);
         vertragspartnerDaoXml.read("2911");
-    */}
+    }
 }

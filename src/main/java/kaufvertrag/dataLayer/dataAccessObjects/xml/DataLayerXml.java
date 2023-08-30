@@ -1,18 +1,19 @@
 package kaufvertrag.dataLayer.dataAccessObjects.xml;
 
+import kaufvertrag.businessObjects.IVertragspartner;
+import kaufvertrag.businessObjects.IWare;
+import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
-import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
-import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
 
 public class DataLayerXml implements IDataLayer {
 
     @Override
-    public IVertragspartnerDao getVertragspartnerDao() {
-        return null;
+    public IDao<IVertragspartner, String> getVertragspartnerDao() {
+        return new VertragspartnerDaoXml();
     }
 
     @Override
-    public IWareDao getWareDao() {
-        return null;
+    public IDao<IWare, Long> getWareDao() {
+        return new WareDaoXml();
     }
 }
