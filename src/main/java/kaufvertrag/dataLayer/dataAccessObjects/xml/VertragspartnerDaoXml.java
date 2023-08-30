@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VertragspartnerDaoXml implements IDao<Vertragspartner, String> {
+public  class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
 
     @Override
     public Vertragspartner create() {
@@ -20,7 +20,7 @@ public class VertragspartnerDaoXml implements IDao<Vertragspartner, String> {
     }
 
     @Override
-    public void create(Vertragspartner objectToInsert) {
+    public void create(IVertragspartner objectToInsert) throws DaoException {
         File outputXmlFile = new File("src/main/resources/" + objectToInsert.getAusweisNr() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
@@ -33,7 +33,7 @@ public class VertragspartnerDaoXml implements IDao<Vertragspartner, String> {
     }
 
     @Override
-    public Vertragspartner read(String id) {
+    public IVertragspartner read(String id) throws DaoException {
         File inputXmlFile = new File("src/main/resources/" + id + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
@@ -46,15 +46,15 @@ public class VertragspartnerDaoXml implements IDao<Vertragspartner, String> {
     }
 
     @Override
-    public List<Vertragspartner> readAll() {
+    public List<IVertragspartner> readAll() throws DaoException {
         File[] xmlFiles = new File("src/main/resources/").listFiles();
-        List<Vertragspartner> vertragspartners = new ArrayList<>();
+        List<IVertragspartner> vertragspartners = new ArrayList<>();
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(IVertragspartner.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             assert xmlFiles != null;
             for (File file : xmlFiles) {
-                vertragspartners.add((Vertragspartner) unmarshaller.unmarshal(file));
+                vertragspartners.add((IVertragspartner) unmarshaller.unmarshal(file));
             }
 
         }
@@ -65,7 +65,7 @@ public class VertragspartnerDaoXml implements IDao<Vertragspartner, String> {
     }
 
     @Override
-    public void update(Vertragspartner objectToUpdate) {
+    public void update(IVertragspartner objectToUpdate) throws DaoException {
         File xmltobeUpdated = new File("src/main/resources/" + objectToUpdate.getAusweisNr() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);

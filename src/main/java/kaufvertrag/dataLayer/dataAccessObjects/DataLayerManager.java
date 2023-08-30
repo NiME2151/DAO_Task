@@ -1,5 +1,6 @@
 package kaufvertrag.dataLayer.dataAccessObjects;
 
+import kaufvertrag.dataLayer.dataAccessObjects.sqlite.DataLayerSqlite;
 import kaufvertrag.dataLayer.dataAccessObjects.xml.DataLayerXml;
 import kaufvertrag.exceptions.DaoException;
 
@@ -8,9 +9,9 @@ import java.util.Scanner;
 public class DataLayerManager {
 
     private static DataLayerManager instance;
-    public String persistenceType;
 
-    private DataLayerManager() {}
+    private DataLayerManager() {
+    }
 
     public static DataLayerManager getInstance() {
         if (instance == null) {
@@ -19,16 +20,12 @@ public class DataLayerManager {
         return instance;
     }
 
-    public IDataLayer getDataLayer() {
-        switch (readPersistenceType()) {
-            case "xml" -> {
-                return new DataLayerXml();
-            }
-            case "sqlite" -> {
-            }
-//                return new DataLayerSqlite();
-        }
-        return null;
+    public IDataLayer getDataLayer() throws DaoException {
+        return switch (readPersistenceType()) {
+            case "xml" -> new DataLayerXml();
+            case "sqlite" -> new DataLayerSqlite();
+            default -> throw new DaoException("persistence type not valid");
+        };
     }
 
     private String readPersistenceType() {

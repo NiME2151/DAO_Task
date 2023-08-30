@@ -16,6 +16,8 @@ public class Adresse implements IAdresse {
         this.ort = ort;
     }
 
+    public Adresse(){}
+
     @Override
     public String getStrasse() {
         return strasse;
