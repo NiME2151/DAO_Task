@@ -1,24 +1,34 @@
 package kaufvertrag.dataLayer.dataAccessObjects;
 
+import kaufvertrag.dataLayer.dataAccessObjects.xml.DataLayerXml;
+import kaufvertrag.exceptions.DaoException;
+
 public class DataLayerManager {
 
-    private DataLayerManager instance;
-    private String persistenceType;
+    private static DataLayerManager instance;
+    public String persistenceType;
 
     private DataLayerManager() {}
 
-    public DataLayerManager getInstance() {
-        if (this.instance == null) {
-            this.instance = new DataLayerManager();
+    public static DataLayerManager getInstance() {
+        if (instance == null) {
+            instance = new DataLayerManager();
+
         }
-        return this.instance;
+        return instance;
     }
 
     public IDataLayer getDataLayer() {
-        return this.instance.getDataLayer();
+        if (instance.readPersistenceType().equalsIgnoreCase("xml")) {
+            return new DataLayerXml();
+        }
+        else if (instance.readPersistenceType().equalsIgnoreCase("sqlite")){
+//            return new DataLayerSqlite();
+        }
+        throw new DaoException("persistence type not valid");
     }
 
     private String readPersistenceType() {
-        return this.instance.persistenceType;
+        return instance.persistenceType;
     }
 }
