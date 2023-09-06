@@ -60,7 +60,7 @@ public class Adresse implements IAdresse {
 
     @Override
     public String toString() {
-        return "kaufvertrag.dataLayer.businessObjects.Adresse{" +
+        return "Adresse{" +
                 "strasse='" + strasse + '\'' +
                 ", hausNr='" + hausNr + '\'' +
                 ", plz='" + plz + '\'' +

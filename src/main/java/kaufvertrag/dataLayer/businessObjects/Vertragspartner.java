@@ -1,8 +1,10 @@
 package kaufvertrag.dataLayer.businessObjects;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
 import kaufvertrag.businessObjects.IAdresse;
 import kaufvertrag.businessObjects.IVertragspartner;
 
+@XmlRootElement(name = "vertragspartner")
 public class Vertragspartner implements IVertragspartner {
 
     private String ausweisNr;
@@ -48,7 +50,7 @@ public class Vertragspartner implements IVertragspartner {
     }
 
     @Override
-    public IAdresse getAdresse() {
+    public Adresse getAdresse() {
         return adresse;
     }
 
@@ -59,9 +61,11 @@ public class Vertragspartner implements IVertragspartner {
 
     @Override
     public String toString() {
-        String text = vorname + " " + nachname;
-        text += "\n\t\tAusweisNr: " + ausweisNr;
-        text += "\n\t\tAdresse: " + adresse;
-        return text;
+        return "Vertragspartner{" +
+                "ausweisNr='" + ausweisNr + '\'' +
+                ", vorname='" + vorname + '\'' +
+                ", nachname='" + nachname + '\'' +
+                ", adresse=" + adresse +
+                '}';
     }
 }

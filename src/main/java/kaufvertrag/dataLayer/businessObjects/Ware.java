@@ -1,17 +1,23 @@
 package kaufvertrag.dataLayer.businessObjects;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
 import kaufvertrag.businessObjects.IWare;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement(name = "ware")
 public class Ware implements IWare {
 
     private long id;
     private String bezeichnung;
     private String beschreibung;
     private double preis;
-    private List<String> besonderheiten;
-    private List<String> maengel;
+    private List<String> besonderheiten = new ArrayList<>();
+    private List<String> maengel = new ArrayList<>();
+
+    public Ware() {
+    }
 
     public Ware(String bezeichnung, double preis) {
         this.bezeichnung = bezeichnung;
