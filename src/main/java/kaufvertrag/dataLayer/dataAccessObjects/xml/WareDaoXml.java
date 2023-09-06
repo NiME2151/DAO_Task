@@ -28,6 +28,7 @@ public  class WareDaoXml implements IDao<IWare, Long> {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Ware.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(objectToInsert, outputXmlFile);
         }
         catch (Exception e) {
@@ -59,7 +60,6 @@ public  class WareDaoXml implements IDao<IWare, Long> {
             for (File file : xmlFiles) {
                 waren.add((Ware) unmarshaller.unmarshal(file));
             }
-
         }
         catch (Exception e) {
             throw new DaoException(e.getMessage());
@@ -71,8 +71,9 @@ public  class WareDaoXml implements IDao<IWare, Long> {
     public void update(IWare objectToUpdate) throws DaoException {
         File xmltobeUpdated = new File(WAREN_PATH + objectToUpdate.getId() + ".xml");
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(Ware.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(objectToUpdate, xmltobeUpdated);
         }
         catch (Exception e) {

@@ -27,6 +27,7 @@ public  class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(objectToInsert, outputXmlFile);
         }
         catch (Exception e) {
@@ -72,6 +73,7 @@ public  class VertragspartnerDaoXml implements IDao<IVertragspartner, String> {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Vertragspartner.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(objectToUpdate, xmltobeUpdated);
         }
         catch (Exception e) {

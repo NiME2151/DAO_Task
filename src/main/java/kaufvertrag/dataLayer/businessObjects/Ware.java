@@ -1,5 +1,6 @@
 package kaufvertrag.dataLayer.businessObjects;
 
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import kaufvertrag.businessObjects.IWare;
 
@@ -13,7 +14,9 @@ public class Ware implements IWare {
     private String bezeichnung;
     private String beschreibung;
     private double preis;
+    @XmlElementWrapper(name = "besonderheiten")
     private List<String> besonderheiten = new ArrayList<>();
+    @XmlElementWrapper(name = "maengel")
     private List<String> maengel = new ArrayList<>();
 
     public Ware() {
@@ -79,8 +82,14 @@ public class Ware implements IWare {
         text += "\n\t\tID: " + id;
         text += "\n\t\tBeschreibung: " + beschreibung;
         text += "\n\t\tPreis: " + preis;
-        text += "\n\t\tBesonderheiten: " + besonderheiten.toString();
-        text += "\n\t\tMängel: " + maengel.toString();
+        text += "\n\t\tBesonderheiten: ";
+        for (String besonderheit : besonderheiten) {
+            text += besonderheit;
+        }
+        text += "\n\t\tMängel: ";
+        for (String mangel : maengel) {
+            text += mangel;
+        }
         return text;
     }
 }

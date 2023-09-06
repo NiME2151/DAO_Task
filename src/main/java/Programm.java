@@ -49,6 +49,7 @@ public class Programm {
         ware.getBesonderheiten().add("Eine Besonderheit");
         wareDaoXml.create(ware);
         System.out.println(wareDaoXml.read(ware.getId()));
+        ware.setPreis(2011.99);
         wareDaoXml.update(ware);
         System.out.println(wareDaoXml.readAll());
     }

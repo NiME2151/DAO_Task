@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ware>
+    <besonderheiten>
+        <besonderheiten>Eine Besonderheit</besonderheiten>
+    </besonderheiten>
+    <maengel>
+        <maengel>Ein Mangel</maengel>
+    </maengel>
+    <beschreibung>Eine Beschreibung</beschreibung>
+    <bezeichnung>Eine Ware</bezeichnung>
+    <id>1129</id>
+    <preis>2011.99</preis>
+</ware>
