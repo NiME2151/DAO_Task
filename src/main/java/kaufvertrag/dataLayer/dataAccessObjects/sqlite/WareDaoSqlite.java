@@ -68,7 +68,7 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
                     resultSet.getString("beschreibung"),
                     resultSet.getDouble("preis"),
                     besonderheiten,
-                    maengel)
+                    maengel);
             ConnectionManager.close(resultSet,statement,ConnectionManager.getExistingConnection());
         } 
         catch (SQLException e) {
