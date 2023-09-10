@@ -1,36 +1,34 @@
 package kaufvertrag.dataLayer.dataAccessObjects.xml;
 
-import kaufvertrag.businessObjects.IWare;
 import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.IDao;
-import kaufvertrag.exceptions.DaoException;
 
 import java.util.List;
 
-public class WareDaoXml implements IDao<IWare, Long> {
+public class WareDaoXml implements IDao<Ware, Long> {
+
 
     @Override
-    public IWare create() {
-        return new Ware("", 0);
-    }
-
-    @Override
-    public void create(IWare objectToInsert) throws DaoException {
-        Ware ware = new Ware(objectToInsert.getBezeichnung(), objectToInsert.getPreis());
-    }
-
-    @Override
-    public IWare read(Long id) {
+    public Ware create() {
         return null;
     }
 
     @Override
-    public List<IWare> readAll() {
+    public void create(Ware objectToInsert){
+    }
+
+    @Override
+    public Ware read(Long id) {
         return null;
     }
 
     @Override
-    public void update(IWare objectToUpdate) {
+    public List<Ware> readAll() {
+        return null;
+    }
+
+    @Override
+    public void update(Ware objectToUpdate) {
 
     }
 
