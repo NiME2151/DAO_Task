@@ -13,6 +13,12 @@ import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
 import kaufvertrag.dataLayer.dataAccessObjects.sqlite.VertragspartnerDaoSqlite;
 import kaufvertrag.dataLayer.dataAccessObjects.xml.VertragspartnerDaoXml;
 import kaufvertrag.exceptions.DaoException;
+import org.jvnet.fastinfoset.sax.EncodingAlgorithmContentHandler;
+
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 public class Programm {
 
