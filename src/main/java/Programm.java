@@ -99,17 +99,21 @@ public class Programm {
         String bezeichnung = scanner.next();
         System.out.println("Beschreibung:");
         String beschreibung = scanner.next();
-        double preis;
-        System.out.println("Preis:");
-       while (true) {
-           try {
-                preis = scanner.nextDouble();
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Ungültige Eingabe!\nPreis bitte als Nummer.");
-                scanner.reset();
+        double preis = -1;
+        var done = false;
+        do {
+            try {
+                System.out.println("Preis:");
+                var hopefullyANumber= scanner.next();
+                preis = tryParseDouble(hopefullyANumber);
+                done = true;
+            } catch (Exception e) {
+                System.out.println("Bitte eine Zahl eingeben!");
             }
-        } 
+        } while (!done);
+
+        System.out.println(preis);
+         
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
         List<String> besonderheiten = new ArrayList<>();
         while (scanner.next().equalsIgnoreCase("y")) {
