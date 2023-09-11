@@ -1,22 +1,13 @@
-import com.sun.xml.bind.v2.model.core.ID;
-import kaufvertrag.businessObjects.IAdresse;
-import kaufvertrag.businessObjects.IKaufvertrag;
-import kaufvertrag.businessObjects.IVertragspartner;
 import kaufvertrag.dataLayer.businessObjects.Adresse;
-import kaufvertrag.dataLayer.businessObjects.Kaufvertrag;
 import kaufvertrag.dataLayer.businessObjects.Vertragspartner;
 import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.DataLayerManager;
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
 import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
 import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
-import kaufvertrag.dataLayer.dataAccessObjects.sqlite.VertragspartnerDaoSqlite;
-import kaufvertrag.dataLayer.dataAccessObjects.xml.VertragspartnerDaoXml;
 import kaufvertrag.exceptions.DaoException;
-import org.jvnet.fastinfoset.sax.EncodingAlgorithmContentHandler;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,6 +29,7 @@ public class Programm {
                 case "d" -> delete(scanner, dataLayer);
                 case "q" -> {
                     scanner.close();
+                    return;
                 }
                 default -> System.out.println("Eingabe ungültig\nnochmal versuchen:");
             }
@@ -51,17 +43,10 @@ public class Programm {
         //Mit scanner auslesen was Antwort ist und entsprechend reagieren
         while (scanner.hasNext()) {
             switch (scanner.next().toLowerCase()) {
-                case "w":
-                    createWare(scanner, dataLayer);
-                    break;
-                case "v":
-                    createVertragspartner(scanner, dataLayer);
-                    break;
-                case "q":
-                    scanner.close();
-                    break;
-                default:
-                    System.out.println("invalid input\ntry again");
+                case "w" -> createWare(scanner, dataLayer);
+                case "v" -> createVertragspartner(scanner, dataLayer);
+                case "q" -> scanner.close();
+                default -> System.out.println("invalid input\ntry again");
             }
         }
     }
@@ -88,9 +73,18 @@ public class Programm {
 
         Vertragspartner vertragspartner = new Vertragspartner(vorname, nachname, ausweisNr, adresse);
 
-        System.out.println(vertragspartner.toString());
+        System.out.println(vertragspartner);
         
         vertragspartnerDao.create(vertragspartner);
+    }
+
+    private static boolean isDouble(String input) {
+        try {
+            Double.parseDouble(input);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private static void createWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
@@ -99,21 +93,17 @@ public class Programm {
         String bezeichnung = scanner.next();
         System.out.println("Beschreibung:");
         String beschreibung = scanner.next();
-        double preis = -1;
-        var done = false;
-        do {
-            try {
-                System.out.println("Preis:");
-                var hopefullyANumber= scanner.next();
-                preis = tryParseDouble(hopefullyANumber);
-                done = true;
-            } catch (Exception e) {
-                System.out.println("Bitte eine Zahl eingeben!");
-            }
-        } while (!done);
-
-        System.out.println(preis);
-         
+        double preis;
+        System.out.println("Preis:");
+       while (true) {
+           String input = scanner.next();
+           if (isDouble(input)) {
+               preis = Double.parseDouble(input);
+               break;
+           } else {
+               System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
+           }
+        } 
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
         List<String> besonderheiten = new ArrayList<>();
         while (scanner.next().equalsIgnoreCase("y")) {
