@@ -144,7 +144,18 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         
         
         @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws DaoException {
+            PreparedStatement statement;
+            try {
+                ConnectionManager.getNewConnection();
+                String sql = "DELETE * FROM Ware WHERE id = " + id;
+                statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
+                statement.executeQuery();
+            }
+            catch (SQLException e) {
+                throw new DaoException(e.getMessage());
+            }
+        
 
     }
     

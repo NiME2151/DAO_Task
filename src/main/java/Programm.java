@@ -17,11 +17,11 @@ public class Programm {
         boolean lastRun = false;
         Scanner scanner = new Scanner(System.in);
         do {
-            System.out.println("Möchten Sie Vertragspartner/Ware:\n\terstellen? \"C\"\n\tlesen? \"R\"\n\tupdaten? \"U\"\n\tlöschen? \"D\"\n\tBeenden \"Q\"");
+            System.out.println("Möchten Sie Vertragspartner/Ware:\n\terstellen? \"E\"\n\tlesen? \"L\"\n\tupdaten? \"U\"\n\tlöschen? \"D\"\n\tBeenden \"Q\"");
             String chosenOption = scanner.next();
             switch (chosenOption) {
-                case "c" -> create(scanner, dataLayer);
-                case "r" -> read(scanner, dataLayer);
+                case "e" -> create(scanner, dataLayer);
+                case "l" -> read(scanner, dataLayer);
                 case "u" -> update(scanner, dataLayer);
                 case "d" -> delete(scanner, dataLayer);
                 case "q" -> lastRun = true;
@@ -37,10 +37,8 @@ public class Programm {
     }
 
     private static void create(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        //Abfrage was hinzugefügt werden soll -> Vertragspartner oder Ware
         System.out.println("Was möchten Sie erstellen?\n\tVertragspartner \"V\"\n\tWare \"W\"\n\tAbbrechen \"Q\"");
-
-        //Mit scanner auslesen was Antwort ist und entsprechend reagieren
+        
         while (scanner.hasNext()) {
             switch (scanner.next().toLowerCase()) {
                 case "w" -> createWare(scanner, dataLayer);
@@ -64,6 +62,7 @@ public class Programm {
         String ausweisNr = scanner.next();
         System.out.println("Strasse:");
         //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
+        //Warum hier?
         scanner.nextLine();
         String strasse = scanner.nextLine();
         System.out.println("HausNr:");
@@ -84,13 +83,13 @@ public class Programm {
 
         System.out.println("Bezeichnung:");
         //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
+        //Kommentar raus?
         scanner.nextLine();
         String bezeichnung = scanner.nextLine();
         System.out.println("Beschreibung:");
         String beschreibung = scanner.nextLine();
         double preis;
         System.out.println("Preis:");
-
         preis = getPreis(scanner);
 
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
@@ -143,8 +142,8 @@ public class Programm {
         String objectType = scanner.next().toLowerCase();
         do {
             switch (objectType) {
-                case "w" -> chooseWareReadOption(scanner, dataLayer);
-                case "v" -> chooseVertragspartnerReadOption(scanner, dataLayer);
+                case "w" -> readWare(scanner, dataLayer);
+                case "v" -> readVertragspartner(scanner, dataLayer);
                 case "q" -> {
                     return;
                 }
@@ -153,7 +152,7 @@ public class Programm {
         } while (true);
     }
 
-    private static void chooseVertragspartnerReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+    private static void readVertragspartner(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IVertragspartnerDao vertragspartnerDao = getVertragspartnerDao(dataLayer);
         String readType = askReadType(scanner);
         do {
@@ -171,7 +170,7 @@ public class Programm {
         } while (true);
     }
 
-    private static void chooseWareReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+    private static void readWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IWareDao wareDao = getWareDao(dataLayer);
         do {
             switch (askReadType(scanner)) {
@@ -195,7 +194,7 @@ public class Programm {
         do {
             switch (objectType) {
                 case "w" -> updateWare(scanner, dataLayer, id);
-                case "v" -> updateVertragsparnter(scanner, dataLayer, id);
+                case "v" -> updateVertragspartner(scanner, dataLayer, id);
                 case "q" -> {
                     return;
                 }
@@ -239,7 +238,7 @@ public class Programm {
         wareDao.update(wareToUpdate);
     }
 
-    private static void updateVertragsparnter(Scanner scanner, IDataLayer dataLayer, int id) throws DaoException {
+    private static void updateVertragspartner(Scanner scanner, IDataLayer dataLayer, int id) throws DaoException {
         IVertragspartnerDao vertragspartnerDao = getVertragspartnerDao(dataLayer);
         Vertragspartner vertragspartnerToUpdate = vertragspartnerDao.read(id);
         Adresse adresseToUpdate = vertragspartnerToUpdate.getAdresse();
@@ -343,7 +342,7 @@ public class Programm {
     }
 
     private static void printInvalidInput() {
-        System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
+        System.out.println("Ungültige Eingabe\nBitte nochmal versuchen:");
     }
 
     private static IWareDao getWareDao(IDataLayer dataLayer) {

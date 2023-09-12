@@ -20,7 +20,9 @@ public class ConnectionManager {
             return connection;
         } catch (Exception e) {
             throw new DaoException(e.getMessage());
-        } finally {
+        } 
+        // warum das finally hier? 
+        /*finally {
             try {
                 if (connection != null) {
                     connection.close();
@@ -28,7 +30,7 @@ public class ConnectionManager {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }
+        }*/
     }
 
     public static Connection getExistingConnection() {
