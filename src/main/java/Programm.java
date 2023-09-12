@@ -19,7 +19,7 @@ public class Programm {
         boolean lastRun = false;
         Scanner scanner = new Scanner(System.in);
         do {
-            System.out.println("Möchten Sie Vertragspartner/Ware: \n\terstellen? -> \"C\"\n\tlesen? -> \"R\"\n\tupdaten? -> \"U\"\n\tlöschen? -> \"D\"\n\tBeenden \"Q\":");
+            System.out.println("Möchten Sie Vertragspartner/Ware:\n\terstellen? \"C\"\n\tlesen? \"R\"\n\tupdaten? \"U\"\n\tlöschen? \"D\"\n\tBeenden \"Q\"");
             String chosenOption = scanner.next();
             switch (chosenOption) {
                 case "c" -> create(scanner, dataLayer);
@@ -40,7 +40,7 @@ public class Programm {
 
     private static void create(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         //Abfrage was hinzugefügt werden soll -> Vertragspartner oder Ware
-        System.out.println("Was möchten Sie erstellen?\n\tVertragspartner -> \"V\"\n\tWare -> \"W\"\n\tAbbrechen -> \"Q\"");
+        System.out.println("Was möchten Sie erstellen?\n\tVertragspartner \"V\"\n\tWare \"W\"\n\tAbbrechen \"Q\"");
 
         //Mit scanner auslesen was Antwort ist und entsprechend reagieren
         while (scanner.hasNext()) {
@@ -91,16 +91,7 @@ public class Programm {
         double preis;
         System.out.println("Preis:");
 
-        do {
-            String input = scanner.next();
-            String correctedInput = input.replace(",",".");
-            if (isDouble(correctedInput)) {
-                preis = Double.parseDouble(correctedInput);
-                break;
-            } else {
-                printInvalidInput();
-            }
-        } while (true);
+        preis = getPreis(scanner);
 
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
         List<String> besonderheiten = new ArrayList<>();
@@ -131,7 +122,7 @@ public class Programm {
         System.out.println("Was soll gelöscht werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
         int id;
         while (true) {
-            switch (scanner.nextLine().toLowerCase()) {
+            switch (scanner.next().toLowerCase()) {
                 case "w" -> {
                     id = askId(scanner);
                     dataLayer.getWareDao().delete(id);
@@ -149,9 +140,9 @@ public class Programm {
     }
 
     private static void read(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        System.out.println("Was soll ausgegeben werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
+        System.out.println("Was soll ausgegeben werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen \"Q\"");
         String objectType = scanner.next().toLowerCase();
-        while (true) {
+        do {
             switch (objectType) {
                 case "w" -> chooseWareReadOption(scanner, dataLayer);
                 case "v" -> chooseVertragspartnerReadOption(scanner, dataLayer);
@@ -160,14 +151,14 @@ public class Programm {
                 }
                 default -> printInvalidInput();
             }
-        }
+        } while (true);
     }
 
     private static void chooseVertragspartnerReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         int id;
-        String infoType = askReadType(scanner);
+        String readType = askReadType(scanner);
         do {
-            switch (infoType) {
+            switch (readType) {
                 case "a" -> dataLayer.getVertragspartnerDao().read();
                 case "id" -> {
                     id = askId(scanner);
@@ -199,28 +190,69 @@ public class Programm {
         } while (true);
     }
 
-    private static String askReadType(Scanner scanner) {
-        System.out.println("Sollen alle Objekte ausgegeben werden oder nur ein einzelnes?\n\tAlle \"A\"\n\tEins mit einer ID \"ID\"\n\tAbbrechen\"Q\"");
-        return scanner.next().toLowerCase();
+    private static void update(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        System.out.println("Was soll geupdated werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen \"Q\"");
+        String objectType = scanner.next().toLowerCase();
+        int id = askId(scanner);
+        do {
+            switch (objectType) {
+                case "w" -> updateWare(scanner,dataLayer,id);
+                case "v" -> System.out.println("partner");
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+        } while (true);
     }
 
-    private static void update(Scanner scanner, IDataLayer data) {
+    private static void updateWare(Scanner scanner, IDataLayer dataLayer, int id) throws DaoException {
+        Ware wareToUpdate = dataLayer.getWareDao().read().get(id);
+        System.out.println(wareToUpdate.toString() + "\nWelche Information soll geupdated werden?\n\t1. Bezeichnung\n\t2. Beschreibung\n\t3. Preis\n\tAbbrechen \"Q\"");
+        String option = scanner.next().toLowerCase();
+        boolean finishedInput;
+        do {
+            switch (option) {
+                case "1" -> {
+                    System.out.println("Neue Bezeichung:");
+                    String bezeichnung = scanner.nextLine();
+                    wareToUpdate.setBezeichnung(bezeichnung);
+                }
+                case "2" -> {
+                    System.out.println("Neue Beschreibung");
+                    String beschreibung = scanner.nextLine();
+                    wareToUpdate.setBeschreibung(beschreibung);
+
+                }
+                case "3" -> {
+                    System.out.println("Neuer Preis");
+                    double preis = getPreis(scanner);
+                    wareToUpdate.setPreis(preis);
+                }
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+            System.out.println("Eine weitere Information bearbeiten?\nJa \"y\"\tNein \"n\"");
+            finishedInput = !scanner.next().equalsIgnoreCase("y");
+        } while (!finishedInput);
+        dataLayer.getWareDao().update(wareToUpdate);
     }
 
-    private static void printInvalidInput() {
-        System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
-    }
-
-    private static int askId(Scanner scanner) {
-        System.out.println("Wie ist die ID des Objekts?");
-        while (true) {
+    private static double getPreis(Scanner scanner) {
+        double preis;
+        do {
             String input = scanner.next();
-            try {
-                return Integer.parseInt(input);
-            } catch (Exception e){
+            String correctedInput = input.replace(",", ".");
+            if (isDouble(correctedInput)) {
+                preis = Double.parseDouble(correctedInput);
+                break;
+            } else {
                 printInvalidInput();
             }
-        }
+        } while (true);
+        return preis;
     }
 
     private static boolean isDouble(String input) {
@@ -230,5 +262,26 @@ public class Programm {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static int askId(Scanner scanner) {
+        System.out.println("Wie ist die ID des Objekts?");
+        while (true) {
+            String input = scanner.next();
+            try {
+                return Integer.parseInt(input);
+            } catch (Exception e) {
+                printInvalidInput();
+            }
+        }
+    }
+
+    private static String askReadType(Scanner scanner) {
+        System.out.println("Sollen alle Objekte ausgegeben werden oder nur ein einzelnes?\n\tAlle \"A\"\n\tEins mit einer ID \"ID\"\n\tAbbrechen \"Q\"");
+        return scanner.next().toLowerCase();
+    }
+
+    private static void printInvalidInput() {
+        System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
     }
 }
