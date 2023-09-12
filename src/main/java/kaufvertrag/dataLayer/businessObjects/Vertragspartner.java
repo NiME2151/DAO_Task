@@ -74,7 +74,7 @@ public class Vertragspartner implements IVertragspartner {
     public String toString() {
         String text = vorname + " " + nachname;
         text += "\n\t\tAusweisNr: " + ausweisNr;
-        text += "\n\t\tAdresse: " + adresse.toString();
+        text += "\nAdresse: " + adresse.toString();
         return text;
     }
 }

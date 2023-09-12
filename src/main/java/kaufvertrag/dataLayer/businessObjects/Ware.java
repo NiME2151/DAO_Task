@@ -96,8 +96,8 @@ public class Ware implements IWare {
 
     @Override
     public String toString() {
-        String text = "\n\t\tBezeichnung: " + bezeichnung;
-        text += "\n\t\tID: " + id;
+        String text = "Bezeichnung: " + bezeichnung;
+        text += "\nID: " + id;
         text += "\n\t\tBeschreibung: " + beschreibung;
         text += "\n\t\tPreis: " + preis;
         text += "\n\t\tBesonderheiten: ";
