@@ -65,7 +65,9 @@ public class Programm {
         System.out.println("AusweisNr:");
         String ausweisNr = scanner.next();
         System.out.println("Strasse:");
-        String strasse = scanner.next();
+        //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
+        scanner.nextLine();
+        String strasse = scanner.nextLine();
         System.out.println("HausNr:");
         String hausNr = scanner.next();
         System.out.println("Plz:");
@@ -79,27 +81,21 @@ public class Programm {
         vertragspartnerDao.create(vertragspartner);
     }
 
-    private static boolean isDouble(String input) {
-        try {
-            Double.parseDouble(input);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private static void createWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         System.out.println("Bezeichnung:");
-        String bezeichnung = scanner.next();
+        //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
+        scanner.nextLine();
+        String bezeichnung = scanner.nextLine();
         System.out.println("Beschreibung:");
-        String beschreibung = scanner.next();
+        String beschreibung = scanner.nextLine();
         double preis;
         System.out.println("Preis:");
 
         do {
             String input = scanner.next();
-            if (isDouble(input)) {
-                preis = Double.parseDouble(input);
+            String correctedInput = input.replace(",",".");
+            if (isDouble(correctedInput)) {
+                preis = Double.parseDouble(correctedInput);
                 break;
             } else {
                 printInvalidInput();
@@ -108,26 +104,26 @@ public class Programm {
 
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
         List<String> besonderheiten = new ArrayList<>();
-        addListItems(scanner, "Besonderheiten: ", besonderheiten);
+        scanner.nextLine();
+        addListItems(scanner, "Besonderheit: ", besonderheiten);
 
         System.out.println("Gibt es Mängel?\nJa \"y\"\tNein \"n\"");
         List<String> maengel = new ArrayList<>();
-        addListItems(scanner, "Mängel: ", maengel);
+        scanner.nextLine();
+        addListItems(scanner, "Mangel: ", maengel);
 
         Ware ware = new Ware(bezeichnung, beschreibung, preis, besonderheiten, maengel);
+        System.out.println(ware);
         dataLayer.getWareDao().create(ware);
     }
 
     private static void addListItems(Scanner scanner, String x, List<String> items) {
         while (scanner.next().equalsIgnoreCase("y")) {
             System.out.println(x);
-            String besonderheit = scanner.nextLine();
-            items.add(besonderheit);
+            scanner.nextLine();
+            String item = scanner.nextLine();
+            items.add(item);
             System.out.println("Füge weitere hinzu? \nJa \"y\"\tNein \"n\"");
-            String bool = scanner.nextLine().toLowerCase();
-            if (bool.equals("n")) {
-                break;
-            }
         }
     }
 
@@ -135,7 +131,7 @@ public class Programm {
         System.out.println("Was soll gelöscht werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
         int id;
         while (true) {
-            switch (scanner.next().toLowerCase()) {
+            switch (scanner.nextLine().toLowerCase()) {
                 case "w" -> {
                     id = askId(scanner);
                     dataLayer.getWareDao().delete(id);
@@ -216,14 +212,23 @@ public class Programm {
     }
 
     private static int askId(Scanner scanner) {
-        System.out.println("Wie ist die ID des zu löschenden Objekts?");
+        System.out.println("Wie ist die ID des Objekts?");
         while (true) {
             String input = scanner.next();
-            if (isDouble(input)) {
+            try {
                 return Integer.parseInt(input);
-            } else {
+            } catch (Exception e){
                 printInvalidInput();
             }
+        }
+    }
+
+    private static boolean isDouble(String input) {
+        try {
+            Double.parseDouble(input);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
