@@ -23,8 +23,6 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         PreparedStatement statement;
 
         try {
-            connectionManager.getNewConnection();
-            Connection connection = connectionManager.getExistingConnection();
 
             long id = objectToInsert.getId();
             String bezeichnung = objectToInsert.getBezeichnung();
@@ -32,9 +30,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             double preis = objectToInsert.getPreis();
             String besonderheiten = objectToInsert.getBesonderheiten().toString();
             String maengel = objectToInsert.getMaengel().toString();
-
             String sql = "INSERT INTO Ware (bezeichnung, beschreibung, preis, besonderheiten, maengel, id) VALUES (?,?,?,?,?,?)";
-            statement = connection.prepareStatement(sql);
+
+            connectionManager.getNewConnection();
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
             statement.setString(1, bezeichnung);
             statement.setString(2, beschreibung);
             statement.setDouble(3, preis);
@@ -45,7 +44,7 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             if (rowsInserted > 0) {
                 System.out.println("Neue Ware hinzugefügt");
             }
-            connection.close();
+            connectionManager.close(statement);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
@@ -59,8 +58,8 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         Ware ware;
 
         try {
-            connectionManager.getNewConnection();
             String sql = "SELECT * FROM Ware WHERE id = " + id;
+            connectionManager.getNewConnection();
             statement = connectionManager.getExistingConnection().prepareStatement(sql);
             resultSet = statement.executeQuery();
             ware = new Ware(
@@ -70,7 +69,7 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
                     resultSet.getDouble("preis"),
                     getListFromSavedList(resultSet.getString("besonderheiten")),
                     getListFromSavedList(resultSet.getString("maengel")));
-            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
+            connectionManager.close(resultSet, statement);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
@@ -86,8 +85,8 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         List<Ware> waren = new ArrayList<>();
 
         try {
-            connectionManager.getNewConnection();
             String sql = "SELECT * FROM Ware";
+            connectionManager.getNewConnection();
             statement = connectionManager.getExistingConnection().prepareStatement(sql);
             resultSet = statement.executeQuery();
 
@@ -105,7 +104,7 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
                 waren.add(ware);
             }
-            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
+            connectionManager.close(resultSet, statement);
         } catch (SQLException | DaoException e) {
             throw new DaoException(e.getMessage());
         }
@@ -114,33 +113,35 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
     private List<String> getListFromSavedList(String savedList) {
         String[] split = savedList.substring(1, savedList.length() - 1).split(" ,");
-        return Arrays.asList(split);
+        return new ArrayList<>(Arrays.asList(split));
     }
 
 
     @Override
     public void update(Ware objectToUpdate) throws DaoException {
         PreparedStatement statement;
+        long id = objectToUpdate.getId();
         try {
-            connectionManager.getNewConnection();
-            Ware ware = read(objectToUpdate.getId());
-            List<String> aenderungen = getUnterschiedeInWaren(ware, objectToUpdate);
+            Ware wareUrsprung = read(id);
+            List<String> aenderungen = getUnterschiedeInWaren(wareUrsprung, objectToUpdate);
 
             if (aenderungen.isEmpty()) {
                 return;
             }
 
             StringBuilder sql = new StringBuilder("UPDATE Ware SET ");
-            int i = 0;
-            for (String aenderung : aenderungen) {
-                if (i > 0) {
-                    sql.append(", ");
+
+            for (int i = 0; i < aenderungen.size(); i++) {
+                sql.append(aenderungen.get(i));
+                if (i < aenderungen.size() - 1) {
+                    sql.append(" , ");
                 }
-                sql.append(aenderung);
-                i++;
             }
+            sql.append(" WHERE id = ").append(id).append(";");
+            connectionManager.getNewConnection();
             statement = connectionManager.getExistingConnection().prepareStatement(String.valueOf(sql));
-            statement.executeQuery();
+            statement.executeUpdate();
+            connectionManager.close(statement);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
@@ -159,19 +160,19 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             return unterschiede;
         }
         if (!ware.getBeschreibung().equals(objectToUpdate.getBeschreibung())) {
-            unterschiede.add("beschreibung =" + objectToUpdate.getBeschreibung());
+            unterschiede.add("beschreibung = '" + objectToUpdate.getBeschreibung() + "'");
         }
         if (!ware.getBezeichnung().equals(objectToUpdate.getBezeichnung())) {
-            unterschiede.add("bezeichnung =" + objectToUpdate.getBezeichnung());
+            unterschiede.add("bezeichnung = '" + objectToUpdate.getBezeichnung() +"'");
         }
-        if (!(ware.getPreis() == objectToUpdate.getPreis())) {
-            unterschiede.add("preis =" + objectToUpdate.getPreis());
+        if (ware.getPreis() != objectToUpdate.getPreis()) {
+            unterschiede.add("preis = '" + objectToUpdate.getPreis()+"'");
         }
         if (!ware.getBesonderheiten().equals(objectToUpdate.getBesonderheiten())) {
-            unterschiede.add("besonderheiten =" + objectToUpdate.getBesonderheiten().toString());
+            unterschiede.add("besonderheiten = '" + objectToUpdate.getBesonderheiten().toString()+"'");
         }
         if (!ware.getMaengel().equals(objectToUpdate.getMaengel())) {
-            unterschiede.add("maengel =" + objectToUpdate.getMaengel().toString());
+            unterschiede.add("maengel = '" + objectToUpdate.getMaengel().toString()+"'");
         }
         return unterschiede;
     }

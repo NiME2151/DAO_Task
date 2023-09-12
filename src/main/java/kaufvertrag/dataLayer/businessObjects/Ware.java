@@ -116,4 +116,12 @@ public class Ware implements IWare {
         }
         return text.toString();
     }
+
+    public void setMaengel(List<String> maengel) {
+        this.maengel = maengel;
+    }
+
+    public void setBesonderheiten(List<String> besonderheiten) {
+        this.besonderheiten = besonderheiten;
+    }
 }
