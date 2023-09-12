@@ -96,18 +96,24 @@ public class Ware implements IWare {
 
     @Override
     public String toString() {
-        String text = "Bezeichnung: " + bezeichnung;
-        text += "\nID: " + id;
-        text += "\n\t\tBeschreibung: " + beschreibung;
-        text += "\n\t\tPreis: " + preis;
-        text += "\n\t\tBesonderheiten: ";
-        for (String besonderheit : besonderheiten) {
-            text += besonderheit;
+        StringBuilder text = new StringBuilder("Bezeichnung: " + bezeichnung);
+        text.append("\nID: ").append(id);
+        text.append("\n\t\tBeschreibung: ").append(beschreibung);
+        text.append("\n\t\tPreis: ").append(preis);
+        text.append("\n\t\tBesonderheiten: ");
+        for (int i = 0; i < besonderheiten.size(); i++) {
+            text.append(besonderheiten.get(i));
+            if (i < besonderheiten.size() - 1) {
+                text.append(" , ");
+            }
         }
-        text += "\n\t\tMängel: ";
-        for (String mangel : maengel) {
-            text += mangel;
+        text.append("\n\t\tMängel: ");
+        for (int i = 0; i < maengel.size(); i++) {
+            text.append(maengel.get(i));
+            if (i < maengel.size() - 1) {
+                text.append(" , ");
+            }
         }
-        return text;
+        return text.toString();
     }
 }

@@ -4,13 +4,14 @@ import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.exceptions.DaoException;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WareDaoSqlite implements IDao<Ware, Long> {
+
+    ConnectionManager connectionManager = new ConnectionManager();
 
     @Override
     public Ware create() {
@@ -20,28 +21,31 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
     @Override
     public void create(Ware objectToInsert) throws DaoException {
         PreparedStatement statement;
-        
-        try {
-            ConnectionManager.getNewConnection();
 
+        try {
+            connectionManager.getNewConnection();
+            Connection connection = connectionManager.getExistingConnection();
+
+            long id = objectToInsert.getId();
             String bezeichnung = objectToInsert.getBezeichnung();
             String beschreibung = objectToInsert.getBeschreibung();
             double preis = objectToInsert.getPreis();
             String besonderheiten = objectToInsert.getBesonderheiten().toString();
             String maengel = objectToInsert.getMaengel().toString();
 
-            String sql = "INSERT INTO Ware (bezeichnung, beschreibung, preis, besonderheiten, maengel) VALUES (?,?,?,?,?)";
-            statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
-            statement.setString(1,bezeichnung);
-            statement.setString(2,beschreibung);
-            statement.setDouble(3,preis);
-            statement.setString(4,besonderheiten);
-            statement.setString(5,maengel);
-            int rowsInserted =  statement.executeUpdate();
+            String sql = "INSERT INTO Ware (bezeichnung, beschreibung, preis, besonderheiten, maengel, id) VALUES (?,?,?,?,?,?)";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, bezeichnung);
+            statement.setString(2, beschreibung);
+            statement.setDouble(3, preis);
+            statement.setString(4, besonderheiten);
+            statement.setString(5, maengel);
+            statement.setLong(6, id);
+            int rowsInserted = statement.executeUpdate();
             if (rowsInserted > 0) {
                 System.out.println("Neue Ware hinzugefügt");
             }
-            ConnectionManager.close(null, statement , ConnectionManager.getExistingConnection());
+            connection.close();
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
@@ -49,17 +53,17 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
     @Override
     public Ware read(Long id) throws DaoException {
-        
+
         ResultSet resultSet;
         PreparedStatement statement;
         Ware ware;
-        
+
         try {
-            ConnectionManager.getNewConnection();
+            connectionManager.getNewConnection();
             String sql = "SELECT * FROM Ware WHERE id = " + id;
-            statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
             resultSet = statement.executeQuery();
-            
+
             List<String> besonderheiten = List.of(resultSet.getString("besonderheiten").split(","));
             List<String> maengel = List.of(resultSet.getString("maengel").split(","));
             ware = new Ware(
@@ -69,9 +73,8 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
                     resultSet.getDouble("preis"),
                     besonderheiten,
                     maengel);
-            ConnectionManager.close(resultSet,statement,ConnectionManager.getExistingConnection());
-        } 
-        catch (SQLException e) {
+            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
+        } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
 
@@ -80,93 +83,97 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
     @Override
     public List<Ware> readAll() throws DaoException {
-        
+
         ResultSet resultSet;
         PreparedStatement statement;
         List<Ware> waren = new ArrayList<>();
 
         try {
-            ConnectionManager.getNewConnection();
+            connectionManager.getNewConnection();
             String sql = "SELECT * FROM Ware";
-            statement = ConnectionManager.getExistingConnection().prepareStatement(sql);
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
             resultSet = statement.executeQuery();
-            
+
             while (resultSet.next()) {
-                
-                long id = resultSet.getInt("userid");
-                String bezeichnung = resultSet.getString("bezeichnung"); 
+
+                long id = resultSet.getInt("id");
+                String bezeichnung = resultSet.getString("bezeichnung");
                 String beschreibung = resultSet.getString("beschreibung");
                 double preis = resultSet.getDouble("preis");
-                List<String> besonderheiten = List.of(resultSet.getString("besonderheiten").split(","));
-                List<String> maengel = List.of(resultSet.getString("maengel").split(","));
+                List<String> besonderheiten = getListFromSavedList(resultSet.getString("besonderheiten"));
+                List<String> maengel = getListFromSavedList(resultSet.getString("maengel"));
 
-                
+
                 Ware ware = new Ware(id, bezeichnung, beschreibung, preis, besonderheiten, maengel);
 
                 waren.add(ware);
             }
-            ConnectionManager.close(resultSet,statement,ConnectionManager.getExistingConnection());
-        }
-        catch (SQLException | DaoException e) {
+            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
+        } catch (SQLException | DaoException e) {
             throw new DaoException(e.getMessage());
         }
         return waren;
     }
-    
+
+    private List<String> getListFromSavedList(String savedList) {
+        String[] split = savedList.substring(1,savedList.length()-1).split(" ,");
+        return Arrays.asList(split);
+    }
+
 
     @Override
     public void update(Ware objectToUpdate) throws DaoException {
         PreparedStatement statement;
         try {
-            ConnectionManager.getNewConnection();
+            connectionManager.getNewConnection();
             Ware ware = read(objectToUpdate.getId());
-            List <String> aenderungen = getUnterschiedeInWaren(ware, objectToUpdate);
-            
-            if (aenderungen.isEmpty()){
+            List<String> aenderungen = getUnterschiedeInWaren(ware, objectToUpdate);
+
+            if (aenderungen.isEmpty()) {
                 return;
             }
 
             StringBuilder sql = new StringBuilder("UPDATE Ware SET ");
             int i = 0;
-            for (String aenderung: aenderungen) {
-                if (i > 0){
+            for (String aenderung : aenderungen) {
+                if (i > 0) {
                     sql.append(", ");
                 }
                 sql.append(aenderung);
                 i++;
             }
-            statement = ConnectionManager.getExistingConnection().prepareStatement(String.valueOf(sql));
+            statement = connectionManager.getExistingConnection().prepareStatement(String.valueOf(sql));
             statement.executeQuery();
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
-        } 
+        }
     }
-        
-        
-        @Override
+
+
+    @Override
     public void delete(Long id) {
 
     }
-    
+
     private List<String> getUnterschiedeInWaren(Ware ware, Ware objectToUpdate) {
         List<String> unterschiede = new ArrayList<>();
-        
-        if (ware.equals(objectToUpdate)){
+
+        if (ware.equals(objectToUpdate)) {
             return unterschiede;
         }
-        if (!ware.getBeschreibung().equals(objectToUpdate.getBeschreibung())){
+        if (!ware.getBeschreibung().equals(objectToUpdate.getBeschreibung())) {
             unterschiede.add("beschreibung =" + objectToUpdate.getBeschreibung());
         }
-        if (!ware.getBezeichnung().equals(objectToUpdate.getBezeichnung())){
+        if (!ware.getBezeichnung().equals(objectToUpdate.getBezeichnung())) {
             unterschiede.add("bezeichnung =" + objectToUpdate.getBezeichnung());
         }
-        if (!(ware.getPreis() == objectToUpdate.getPreis())){
+        if (!(ware.getPreis() == objectToUpdate.getPreis())) {
             unterschiede.add("preis =" + objectToUpdate.getPreis());
         }
-        if (!ware.getBesonderheiten().equals(objectToUpdate.getBesonderheiten())){
+        if (!ware.getBesonderheiten().equals(objectToUpdate.getBesonderheiten())) {
             unterschiede.add("besonderheiten =" + objectToUpdate.getBesonderheiten().toString());
         }
-        if (!ware.getMaengel().equals(objectToUpdate.getMaengel())){
+        if (!ware.getMaengel().equals(objectToUpdate.getMaengel())) {
             unterschiede.add("maengel =" + objectToUpdate.getMaengel().toString());
         }
         return unterschiede;

@@ -14,6 +14,6 @@ public class DataLayerSqlite implements IDataLayer {
 
     @Override
     public IDao<Ware, Long> getWareDao() {
-        return null;
+        return new WareDaoSqlite();
     }
 }
