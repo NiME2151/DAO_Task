@@ -17,7 +17,12 @@ public class Vertragspartner implements IVertragspartner {
         this.nachname = nachname;
     }
 
-    public Vertragspartner(){};
+    public Vertragspartner(String vorname, String nachname, String ausweisNr, Adresse adresse) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+        this.adresse = adresse;
+        this.ausweisNr = ausweisNr;
+    }
 
     @Override
     public String getAusweisNr() {
@@ -61,10 +66,9 @@ public class Vertragspartner implements IVertragspartner {
 
     @Override
     public String toString() {
-        String text = "\n\t\tAusweis-Nr.: " + ausweisNr;
-        text += "\n\t\tID: " + vorname;
-        text += "\n\t\tBeschreibung: " + nachname;
-        text += "\n\t\tPreis: " + adresse;
+        String text = vorname + " " + nachname;
+        text += "\n\t\tAusweisNr: " + ausweisNr;
+        text += "\n\t\tAdresse: " + adresse.toString();
         return text;
     }
 }

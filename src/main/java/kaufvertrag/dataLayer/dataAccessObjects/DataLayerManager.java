@@ -21,16 +21,17 @@ public class DataLayerManager {
     }
 
     public IDataLayer getDataLayer() throws DaoException {
-        return switch (readPersistenceType()) {
+        Scanner scanner = new Scanner(System.in);
+        String persistanceType = readPersistenceType(scanner);
+        return switch (persistanceType) {
             case "xml" -> new DataLayerXml();
             case "sqlite" -> new DataLayerSqlite();
             default -> throw new DaoException("persistence type not valid");
         };
     }
 
-    private String readPersistenceType() {
+    private String readPersistenceType(Scanner scanner) {
         System.out.println("Enter \"xml\" or \"sqlite\" as Persistance Type");
-        Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
 }

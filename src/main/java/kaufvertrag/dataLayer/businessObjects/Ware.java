@@ -22,9 +22,29 @@ public class Ware implements IWare {
     public Ware() {
     }
 
+
+    public Ware() {}
+
     public Ware(String bezeichnung, double preis) {
         this.bezeichnung = bezeichnung;
         this.preis = preis;
+    }
+
+    public Ware(long id, String bezeichnung, String beschreibung, double preis, List<String> besonderheiten, List<String> maengel) {
+        this.id = id;
+        this.bezeichnung = bezeichnung;
+        this.beschreibung = beschreibung;
+        this.preis = preis;
+        this.besonderheiten = besonderheiten;
+        this.maengel = maengel;
+    }
+
+    public Ware(String bezeichnung, String beschreibung, double preis, List<String> besonderheiten, List<String> maengel) {
+        this.bezeichnung = bezeichnung;
+        this.beschreibung = beschreibung;
+        this.preis = preis;
+        this.besonderheiten = besonderheiten;
+        this.maengel = maengel;
     }
 
     @Override
