@@ -10,6 +10,6 @@ public interface IVertragspartner {
     void setVorname(String vorname);
     String getNachname();
     void setNachname(String nachname);
-    IAdresse getAdresse();
+    Adresse getAdresse();
     void setAdresse(Adresse adresse);
 }

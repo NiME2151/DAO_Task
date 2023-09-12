@@ -7,20 +7,25 @@ import javax.xml.bind.annotation.XmlElement;
 public class Vertragspartner implements IVertragspartner {
 
     private String ausweisNr;
+
     private String vorname;
+
     private String nachname;
     private Adresse adresse;
-
-    public Vertragspartner(String vorname, String nachname) {
-        this.vorname = vorname;
-        this.nachname = nachname;
-    }
-
+    
     public Vertragspartner(String vorname, String nachname, String ausweisNr, Adresse adresse) {
         this.vorname = vorname;
         this.nachname = nachname;
         this.adresse = adresse;
         this.ausweisNr = ausweisNr;
+    }
+    
+    public Vertragspartner(String vorname, String nachname) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+    }
+
+    public Vertragspartner() {
     }
 
     @Override
