@@ -19,11 +19,9 @@ public class Ware implements IWare {
     @XmlElementWrapper(name = "maengel")
     private List<String> maengel = new ArrayList<>();
 
+    //noArgs Konstruktor, damit xml geschrieben werden kann; wirft sonst IllegalAnnotationException
     public Ware() {
     }
-
-
-    public Ware() {}
 
     public Ware(String bezeichnung, double preis) {
         this.bezeichnung = bezeichnung;

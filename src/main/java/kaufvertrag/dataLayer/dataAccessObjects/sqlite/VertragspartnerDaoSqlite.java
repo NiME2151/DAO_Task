@@ -1,40 +1,38 @@
 package kaufvertrag.dataLayer.dataAccessObjects.sqlite;
 
-import kaufvertrag.businessObjects.IVertragspartner;
 import kaufvertrag.dataLayer.businessObjects.Vertragspartner;
-import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
+import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.exceptions.DaoException;
 
 import java.util.List;
 
-public class VertragspartnerDaoSqlite implements IVertragspartnerDao {
+public class VertragspartnerDaoSqlite implements IDao<Vertragspartner,String> {
     @Override
     public Vertragspartner create() {
         return null;
     }
 
     @Override
-    public Vertragspartner create(IVertragspartner vertragspartner) throws DaoException {
+    public void create(Vertragspartner vertragspartner) throws DaoException {
+    }
+
+    @Override
+    public List<Vertragspartner> readAll() throws DaoException {
         return null;
     }
 
     @Override
-    public List<Vertragspartner> read() throws DaoException {
+    public Vertragspartner read(String id) throws DaoException {
         return null;
     }
 
     @Override
-    public Vertragspartner read(int id) throws DaoException {
-        return null;
-    }
-
-    @Override
-    public void update(IVertragspartner vertragspartner) throws DaoException {
+    public void update(Vertragspartner vertragspartner) throws DaoException {
 
     }
 
     @Override
-    public void delete(int id) throws DaoException {
+    public void delete(String id) {
 
     }
 }

@@ -1,16 +1,22 @@
 package kaufvertrag.dataLayer.businessObjects;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
-import kaufvertrag.businessObjects.IAdresse;
 import kaufvertrag.businessObjects.IVertragspartner;
 
 @XmlRootElement(name = "vertragspartner")
+
 public class Vertragspartner implements IVertragspartner {
 
     private String ausweisNr;
     private String vorname;
     private String nachname;
     private Adresse adresse;
+
+
+    //noArgs Konstruktor, damit xml geschrieben werden kann; wirft sonst IllegalAnnotationException
+    public Vertragspartner() {
+
+    }
 
     public Vertragspartner(String vorname, String nachname) {
         this.vorname = vorname;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<vertragspartner>
+    <adresse>
+        <hausNr>asd</hausNr>
+        <ort>asd</ort>
+        <plz>saf</plz>
+        <strasse>asf</strasse>
+    </adresse>
+    <ausweisNr>asd</ausweisNr>
+    <nachname>asd</nachname>
+    <vorname>ad</vorname>
+</vertragspartner>
