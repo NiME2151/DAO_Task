@@ -14,11 +14,7 @@ public class Ware implements IWare {
     private List<String> maengel;
 
 
-    public Ware() {
-
-    }
-
-    ;
+    public Ware() {}
 
     public Ware(String bezeichnung, double preis) {
         this.bezeichnung = bezeichnung;

@@ -9,12 +9,12 @@ import java.util.List;
 
 public class VertragspartnerDaoSqlite implements IVertragspartnerDao {
     @Override
-    public IVertragspartner create() {
+    public Vertragspartner create() {
         return null;
     }
 
     @Override
-    public IVertragspartner create(IVertragspartner vertragspartner) throws DaoException {
+    public Vertragspartner create(IVertragspartner vertragspartner) throws DaoException {
         return null;
     }
 
@@ -24,7 +24,7 @@ public class VertragspartnerDaoSqlite implements IVertragspartnerDao {
     }
 
     @Override
-    public IVertragspartner read(int id) throws DaoException {
+    public Vertragspartner read(int id) throws DaoException {
         return null;
     }
 

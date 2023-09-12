@@ -1,9 +1,7 @@
 import kaufvertrag.dataLayer.businessObjects.Adresse;
 import kaufvertrag.dataLayer.businessObjects.Vertragspartner;
 import kaufvertrag.dataLayer.businessObjects.Ware;
-import kaufvertrag.dataLayer.dataAccessObjects.DataLayerManager;
-import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
-import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
+import kaufvertrag.dataLayer.dataAccessObjects.*;
 import kaufvertrag.exceptions.DaoException;
 
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public class Programm {
     }
 
     private static void createVertragspartner(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        IVertragspartnerDao vertragspartnerDao = dataLayer.getVertragspartnerDao();
+        IVertragspartnerDao vertragspartnerDao = getVertragspartnerDao(dataLayer);
 
         System.out.println("Vorname:");
         String vorname = scanner.next();
@@ -82,6 +80,8 @@ public class Programm {
     }
 
     private static void createWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        IWareDao wareDao = getWareDao(dataLayer);
+
         System.out.println("Bezeichnung:");
         //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
         scanner.nextLine();
@@ -104,8 +104,7 @@ public class Programm {
         addListItems(scanner, "Mangel: ", maengel);
 
         Ware ware = new Ware(bezeichnung, beschreibung, preis, besonderheiten, maengel);
-        System.out.println(ware);
-        dataLayer.getWareDao().create(ware);
+        wareDao.create(ware);
     }
 
     private static void addListItems(Scanner scanner, String x, List<String> items) {
@@ -125,11 +124,11 @@ public class Programm {
             switch (scanner.next().toLowerCase()) {
                 case "w" -> {
                     id = askId(scanner);
-                    dataLayer.getWareDao().delete(id);
+                    getWareDao(dataLayer).delete(id);
                 }
                 case "v" -> {
                     id = askId(scanner);
-                    dataLayer.getVertragspartnerDao().delete(id);
+                    getVertragspartnerDao(dataLayer).delete(id);
                 }
                 case "q" -> {
                     return;
@@ -155,14 +154,14 @@ public class Programm {
     }
 
     private static void chooseVertragspartnerReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        int id;
+        IVertragspartnerDao vertragspartnerDao = getVertragspartnerDao(dataLayer);
         String readType = askReadType(scanner);
         do {
             switch (readType) {
-                case "a" -> dataLayer.getVertragspartnerDao().read();
+                case "a" -> vertragspartnerDao.read();
                 case "id" -> {
-                    id = askId(scanner);
-                    dataLayer.getVertragspartnerDao().delete(id);
+                    int id = askId(scanner);
+                    vertragspartnerDao.read(id);
                 }
                 case "q" -> {
                     return;
@@ -173,14 +172,13 @@ public class Programm {
     }
 
     private static void chooseWareReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        int id;
-        String infoType = askReadType(scanner);
+        IWareDao wareDao = getWareDao(dataLayer);
         do {
-            switch (infoType) {
-                case "a" -> dataLayer.getWareDao().read();
+            switch (askReadType(scanner)) {
+                case "a" -> wareDao.read();
                 case "id" -> {
-                    id = askId(scanner);
-                    dataLayer.getWareDao().delete(id);
+                    int id = askId(scanner);
+                    wareDao.read(id);
                 }
                 case "q" -> {
                     return;
@@ -196,8 +194,8 @@ public class Programm {
         int id = askId(scanner);
         do {
             switch (objectType) {
-                case "w" -> updateWare(scanner,dataLayer,id);
-                case "v" -> System.out.println("partner");
+                case "w" -> updateWare(scanner, dataLayer, id);
+                case "v" -> updateVertragsparnter(scanner, dataLayer, id);
                 case "q" -> {
                     return;
                 }
@@ -207,7 +205,8 @@ public class Programm {
     }
 
     private static void updateWare(Scanner scanner, IDataLayer dataLayer, int id) throws DaoException {
-        Ware wareToUpdate = dataLayer.getWareDao().read().get(id);
+        IWareDao wareDao = getWareDao(dataLayer);
+        Ware wareToUpdate = wareDao.read(id);
         System.out.println(wareToUpdate.toString() + "\nWelche Information soll geupdated werden?\n\t1. Bezeichnung\n\t2. Beschreibung\n\t3. Preis\n\tAbbrechen \"Q\"");
         String option = scanner.next().toLowerCase();
         boolean finishedInput;
@@ -237,7 +236,65 @@ public class Programm {
             System.out.println("Eine weitere Information bearbeiten?\nJa \"y\"\tNein \"n\"");
             finishedInput = !scanner.next().equalsIgnoreCase("y");
         } while (!finishedInput);
-        dataLayer.getWareDao().update(wareToUpdate);
+        wareDao.update(wareToUpdate);
+    }
+
+    private static void updateVertragsparnter(Scanner scanner, IDataLayer dataLayer, int id) throws DaoException {
+        IVertragspartnerDao vertragspartnerDao = getVertragspartnerDao(dataLayer);
+        Vertragspartner vertragspartnerToUpdate = vertragspartnerDao.read(id);
+        Adresse adresseToUpdate = vertragspartnerToUpdate.getAdresse();
+        System.out.println(vertragspartnerToUpdate + "\nWelche Information soll geupdated werden?\n\t1. Ausweisnummer\n\t2. Vorname\n\t3. Nachname\n\t4. Straße\n\t5. Hausnummer\n\t6. Postleitzahl\n\t7. Ort\n\tAbbrechen \"Q\"");
+        String option = scanner.next().toLowerCase();
+        boolean finishedInput;
+        do {
+            switch (option) {
+                case "1" -> {
+                    System.out.println("Neue Ausweisnummer:");
+                    String ausweisNr = scanner.next();
+                    vertragspartnerToUpdate.setAusweisNr(ausweisNr);
+                }
+                case "2" -> {
+                    System.out.println("Neuer Vorname:");
+                    String vorname = scanner.next();
+                    vertragspartnerToUpdate.setVorname(vorname);
+
+                }
+                case "3" -> {
+                    System.out.println("Neuer Nachname:");
+                    String nachname = scanner.next();
+                    vertragspartnerToUpdate.setNachname(nachname);
+                }
+                case "4" -> {
+                    System.out.println("Neue Straße:");
+                    String strasse = scanner.next();
+                    adresseToUpdate.setStrasse(strasse);
+                }
+                case "5" -> {
+                    System.out.println("Neue Hausnummer:");
+                    String hausNr = scanner.next();
+                    adresseToUpdate.setHausNr(hausNr);
+                }
+                case "6" -> {
+                    System.out.println("Neue Postleitzahl:");
+                    String plz = scanner.next();
+                    adresseToUpdate.setPlz(plz);
+                }
+                case "7" -> {
+                    System.out.println("Neuer Ort:");
+                    String nachname = scanner.next();
+                    adresseToUpdate.setOrt(nachname);
+                }
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+            System.out.println("Eine weitere Information bearbeiten?\nJa \"y\"\tNein \"n\"");
+            finishedInput = !scanner.next().equalsIgnoreCase("y");
+        } while (!finishedInput);
+
+        vertragspartnerToUpdate.setAdresse(adresseToUpdate);
+        vertragspartnerDao.update(vertragspartnerToUpdate);
     }
 
     private static double getPreis(Scanner scanner) {
@@ -276,6 +333,10 @@ public class Programm {
         }
     }
 
+    private static IVertragspartnerDao getVertragspartnerDao(IDataLayer dataLayer) {
+        return dataLayer.getVertragspartnerDao();
+    }
+
     private static String askReadType(Scanner scanner) {
         System.out.println("Sollen alle Objekte ausgegeben werden oder nur ein einzelnes?\n\tAlle \"A\"\n\tEins mit einer ID \"ID\"\n\tAbbrechen \"Q\"");
         return scanner.next().toLowerCase();
@@ -283,5 +344,9 @@ public class Programm {
 
     private static void printInvalidInput() {
         System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
+    }
+
+    private static IWareDao getWareDao(IDataLayer dataLayer) {
+        return dataLayer.getWareDao();
     }
 }
