@@ -63,16 +63,13 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             String sql = "SELECT * FROM Ware WHERE id = " + id;
             statement = connectionManager.getExistingConnection().prepareStatement(sql);
             resultSet = statement.executeQuery();
-
-            List<String> besonderheiten = List.of(resultSet.getString("besonderheiten").split(","));
-            List<String> maengel = List.of(resultSet.getString("maengel").split(","));
             ware = new Ware(
-                    id,
+                    resultSet.getLong("id"),
                     resultSet.getString("bezeichnung"),
                     resultSet.getString("beschreibung"),
                     resultSet.getDouble("preis"),
-                    besonderheiten,
-                    maengel);
+                    getListFromSavedList(resultSet.getString("besonderheiten")),
+                    getListFromSavedList(resultSet.getString("maengel")));
             connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
@@ -116,7 +113,7 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
     }
 
     private List<String> getListFromSavedList(String savedList) {
-        String[] split = savedList.substring(1,savedList.length()-1).split(" ,");
+        String[] split = savedList.substring(1, savedList.length() - 1).split(" ,");
         return Arrays.asList(split);
     }
 
