@@ -43,9 +43,12 @@ public class Programm {
         System.out.println("Was möchten Sie erstellen?\n\tVertragspartner \"V\"\n\tWare \"W\"\n\tAbbrechen \"Q\"");
 
         //Mit scanner auslesen was Antwort ist und entsprechend reagieren
-        while (scanner.hasNext()) {
+        while (true) {
             switch (scanner.next().toLowerCase()) {
-                case "w" -> createWare(scanner, dataLayer);
+                case "w" -> {
+                    createWare(scanner, dataLayer);
+                    return;
+                }
                 case "v" -> {
                     createVertragspartner(scanner, dataLayer);
                     return;
@@ -61,12 +64,11 @@ public class Programm {
     private static void createVertragspartner(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IDao<Vertragspartner, String> vertragspartnerDao = getVertragspartnerDao(dataLayer);
 
+        String ausweisNr = askAusweisNr(scanner);
         System.out.println("Vorname:");
         String vorname = scanner.next();
         System.out.println("Nachname:");
         String nachname = scanner.next();
-        System.out.println("AusweisNr:");
-        String ausweisNr = scanner.next();
         System.out.println("Strasse:");
         //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
         scanner.nextLine();
@@ -86,6 +88,9 @@ public class Programm {
 
     private static void createWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IDao<Ware, Long> wareDao = getWareDao(dataLayer);
+
+
+        long id = askId(scanner);
 
         System.out.println("Bezeichnung:");
         //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
@@ -108,7 +113,7 @@ public class Programm {
         scanner.nextLine();
         addListItems(scanner, "Mangel: ", maengel);
 
-        Ware ware = new Ware(bezeichnung, beschreibung, preis, besonderheiten, maengel);
+        Ware ware = new Ware(id,bezeichnung, beschreibung, preis, besonderheiten, maengel);
         wareDao.create(ware);
     }
 
@@ -139,7 +144,7 @@ public class Programm {
     private static void read(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         System.out.println("Was soll ausgegeben werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen \"Q\"");
         String objectType = scanner.next().toLowerCase();
-        do {
+        while (true){
             switch (objectType) {
                 case "w" -> chooseWareReadOption(scanner, dataLayer);
                 case "v" -> chooseVertragspartnerReadOption(scanner, dataLayer);
@@ -148,7 +153,7 @@ public class Programm {
                 }
                 default -> printInvalidInput();
             }
-        } while (true);
+        }
     }
 
     private static void chooseVertragspartnerReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
@@ -306,7 +311,7 @@ public class Programm {
                 printInvalidInput();
             }
         } while (true);
-        return preis;
+        return  Math.round(preis*100.0)/100.0;
     }
 
     private static boolean isDouble(String input) {
@@ -319,11 +324,11 @@ public class Programm {
     }
 
     private static long askId(Scanner scanner) {
-        System.out.println("Wie ist die ID des Objekts?");
+        System.out.println("ID:");
         while (true) {
             String input = scanner.next();
             try {
-                return Integer.parseInt(input);
+                return Long.parseLong(input);
             } catch (Exception e) {
                 printInvalidInput();
             }
@@ -331,7 +336,7 @@ public class Programm {
     }
 
     private static String askAusweisNr(Scanner scanner) {
-        System.out.println("Wie ist die Ausweisnummer des Partners?");
+        System.out.println("Ausweisnummer:");
         return scanner.next();
     }
 
