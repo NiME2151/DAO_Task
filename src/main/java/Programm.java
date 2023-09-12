@@ -4,7 +4,6 @@ import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.DataLayerManager;
 import kaufvertrag.dataLayer.dataAccessObjects.IDataLayer;
 import kaufvertrag.dataLayer.dataAccessObjects.IVertragspartnerDao;
-import kaufvertrag.dataLayer.dataAccessObjects.IWareDao;
 import kaufvertrag.exceptions.DaoException;
 
 import java.util.ArrayList;
@@ -17,36 +16,41 @@ public class Programm {
 
         DataLayerManager dataLayerManager = DataLayerManager.getInstance();
         IDataLayer dataLayer = dataLayerManager.getDataLayer();
-
+        boolean lastRun = false;
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("Möchten Sie Vertrag: \n\terstellen? -> \"C\"\n\tlesen? -> \"R\"\n\tupdaten? -> \"U\"\n\tlöschen? -> \"D\"\n\tQuit \"Q\":");
-            String chosenOption = scanner.nextLine();
+        do {
+            System.out.println("Möchten Sie Vertragspartner/Ware: \n\terstellen? -> \"C\"\n\tlesen? -> \"R\"\n\tupdaten? -> \"U\"\n\tlöschen? -> \"D\"\n\tBeenden \"Q\":");
+            String chosenOption = scanner.next();
             switch (chosenOption) {
                 case "c" -> create(scanner, dataLayer);
                 case "r" -> read(scanner, dataLayer);
                 case "u" -> update(scanner, dataLayer);
                 case "d" -> delete(scanner, dataLayer);
-                case "q" -> {
-                    scanner.close();
-                    return;
-                }
-                default -> System.out.println("Eingabe ungültig\nnochmal versuchen:");
+                case "q" -> lastRun = true;
+                default -> printInvalidInput();
             }
-        }
+
+            if (lastRun) {
+                scanner.close();
+                return;
+            }
+        } while (true);
+
     }
 
     private static void create(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         //Abfrage was hinzugefügt werden soll -> Vertragspartner oder Ware
-        System.out.println("Was möchten Sie erstellen?\n\tVertragspartner -> \"V\"\n\tWare -> \"W\"\n\tQuit -> \"Q\"");
+        System.out.println("Was möchten Sie erstellen?\n\tVertragspartner -> \"V\"\n\tWare -> \"W\"\n\tAbbrechen -> \"Q\"");
 
         //Mit scanner auslesen was Antwort ist und entsprechend reagieren
         while (scanner.hasNext()) {
             switch (scanner.next().toLowerCase()) {
                 case "w" -> createWare(scanner, dataLayer);
                 case "v" -> createVertragspartner(scanner, dataLayer);
-                case "q" -> scanner.close();
-                default -> System.out.println("invalid input\ntry again");
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
             }
         }
     }
@@ -72,9 +76,6 @@ public class Programm {
         Adresse adresse = new Adresse(strasse, hausNr, plz, ort);
 
         Vertragspartner vertragspartner = new Vertragspartner(vorname, nachname, ausweisNr, adresse);
-
-        System.out.println(vertragspartner);
-        
         vertragspartnerDao.create(vertragspartner);
     }
 
@@ -88,60 +89,141 @@ public class Programm {
     }
 
     private static void createWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        IWareDao wareDao = dataLayer.getWareDao();
         System.out.println("Bezeichnung:");
         String bezeichnung = scanner.next();
         System.out.println("Beschreibung:");
         String beschreibung = scanner.next();
         double preis;
         System.out.println("Preis:");
-       while (true) {
-           String input = scanner.next();
-           if (isDouble(input)) {
-               preis = Double.parseDouble(input);
-               break;
-           } else {
-               System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
-           }
-        } 
+
+        do {
+            String input = scanner.next();
+            if (isDouble(input)) {
+                preis = Double.parseDouble(input);
+                break;
+            } else {
+                printInvalidInput();
+            }
+        } while (true);
+
         System.out.println("Gibt es Besonderheiten?\nJa \"y\"\tNein \"n\"");
         List<String> besonderheiten = new ArrayList<>();
-        while (scanner.next().equalsIgnoreCase("y")) {
-            System.out.println("Besonderheiten: ");
-            String besonderheit = scanner.nextLine();
-            besonderheiten.add(besonderheit);
-            System.out.println("Füge weitere hinzu? \nJa \"y\"\tNein \"n\"");
-            String bool = scanner.nextLine().toLowerCase();
-            if (bool.equals("n")) {
-                break;
-            }
-        }
+        addListItems(scanner, "Besonderheiten: ", besonderheiten);
 
         System.out.println("Gibt es Mängel?\nJa \"y\"\tNein \"n\"");
         List<String> maengel = new ArrayList<>();
+        addListItems(scanner, "Mängel: ", maengel);
+
+        Ware ware = new Ware(bezeichnung, beschreibung, preis, besonderheiten, maengel);
+        dataLayer.getWareDao().create(ware);
+    }
+
+    private static void addListItems(Scanner scanner, String x, List<String> items) {
         while (scanner.next().equalsIgnoreCase("y")) {
-            System.out.println("Mängel: ");
-            String mangel = scanner.nextLine();
-            maengel.add(mangel);
+            System.out.println(x);
+            String besonderheit = scanner.nextLine();
+            items.add(besonderheit);
             System.out.println("Füge weitere hinzu? \nJa \"y\"\tNein \"n\"");
             String bool = scanner.nextLine().toLowerCase();
             if (bool.equals("n")) {
                 break;
             }
         }
-        
-        Ware ware = new Ware(bezeichnung,beschreibung,preis,besonderheiten,maengel);
-
-        dataLayer.getWareDao().create(ware);
     }
 
-    private static void delete(Scanner scanner, IDataLayer dataLayer) {
-        System.out.println("Was soll gelöscht werden?\n\tWare \"W\"\n\tVertragspartner \"V\"");
+    private static void delete(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        System.out.println("Was soll gelöscht werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
+        int id;
+        while (true) {
+            switch (scanner.next().toLowerCase()) {
+                case "w" -> {
+                    id = askId(scanner);
+                    dataLayer.getWareDao().delete(id);
+                }
+                case "v" -> {
+                    id = askId(scanner);
+                    dataLayer.getVertragspartnerDao().delete(id);
+                }
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+        }
     }
 
-    private static void read(Scanner scanner, IDataLayer dataLayer) {
+    private static void read(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        System.out.println("Was soll ausgegeben werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
+        String objectType = scanner.next().toLowerCase();
+        while (true) {
+            switch (objectType) {
+                case "w" -> chooseWareReadOption(scanner, dataLayer);
+                case "v" -> chooseVertragspartnerReadOption(scanner, dataLayer);
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+        }
+    }
+
+    private static void chooseVertragspartnerReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        int id;
+        String infoType = askReadType(scanner);
+        do {
+            switch (infoType) {
+                case "a" -> dataLayer.getVertragspartnerDao().read();
+                case "id" -> {
+                    id = askId(scanner);
+                    dataLayer.getVertragspartnerDao().delete(id);
+                }
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+        } while (true);
+    }
+
+    private static void chooseWareReadOption(Scanner scanner, IDataLayer dataLayer) throws DaoException {
+        int id;
+        String infoType = askReadType(scanner);
+        do {
+            switch (infoType) {
+                case "a" -> dataLayer.getWareDao().read();
+                case "id" -> {
+                    id = askId(scanner);
+                    dataLayer.getWareDao().delete(id);
+                }
+                case "q" -> {
+                    return;
+                }
+                default -> printInvalidInput();
+            }
+        } while (true);
+    }
+
+    private static String askReadType(Scanner scanner) {
+        System.out.println("Sollen alle Objekte ausgegeben werden oder nur ein einzelnes?\n\tAlle \"A\"\n\tEins mit einer ID \"ID\"\n\tAbbrechen\"Q\"");
+        return scanner.next().toLowerCase();
     }
 
     private static void update(Scanner scanner, IDataLayer data) {
+    }
+
+    private static void printInvalidInput() {
+        System.out.println("Ungültige Eingabe\nBitte nochmal veruschen:");
+    }
+
+    private static int askId(Scanner scanner) {
+        System.out.println("Wie ist die ID des zu löschenden Objekts?");
+        while (true) {
+            String input = scanner.next();
+            if (isDouble(input)) {
+                return Integer.parseInt(input);
+            } else {
+                printInvalidInput();
+            }
+        }
     }
 }
