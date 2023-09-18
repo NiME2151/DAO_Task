@@ -167,12 +167,6 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         if (!(ware.getPreis() == objectToUpdate.getPreis())) {
             unterschiede.add("preis =" + objectToUpdate.getPreis());
         }
-        if (!ware.getBesonderheiten().equals(objectToUpdate.getBesonderheiten())) {
-            unterschiede.add("besonderheiten =" + objectToUpdate.getBesonderheiten().toString());
-        }
-        if (!ware.getMaengel().equals(objectToUpdate.getMaengel())) {
-            unterschiede.add("maengel =" + objectToUpdate.getMaengel().toString());
-        }
         return unterschiede;
     }
 }

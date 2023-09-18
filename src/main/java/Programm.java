@@ -233,11 +233,6 @@ public class Programm {
                     double preis = getPreis(scanner);
                     wareToUpdate.setPreis(preis);
                 }
-                case "4" -> {
-                    System.out.println("Neuer Preis");
-                    long id = askId(scanner);
-                    wareToUpdate.setId(id);
-                }
                 case "q" -> {
                     return;
                 }
