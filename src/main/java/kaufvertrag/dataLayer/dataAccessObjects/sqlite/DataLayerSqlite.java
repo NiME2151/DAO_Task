@@ -9,7 +9,7 @@ public class DataLayerSqlite implements IDataLayer {
 
     @Override
     public IDao<Vertragspartner, String> getVertragspartnerDao() {
-        return null;
+        return new VertragspartnerDaoSqlite();
     }
 
     @Override
