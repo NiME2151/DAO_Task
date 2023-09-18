@@ -2,15 +2,18 @@ package kaufvertrag.dataLayer.dataAccessObjects.sqlite;
 
 import kaufvertrag.dataLayer.businessObjects.Adresse;
 import kaufvertrag.dataLayer.businessObjects.Vertragspartner;
+import kaufvertrag.dataLayer.businessObjects.Ware;
 import kaufvertrag.dataLayer.dataAccessObjects.IDao;
 import kaufvertrag.exceptions.DaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class VertragspartnerDaoSqlite implements IDao<Vertragspartner,String> {
+public class VertragspartnerDaoSqlite implements IDao<Vertragspartner, String> {
 
     ConnectionManager connectionManager = new ConnectionManager();
 
@@ -53,7 +56,38 @@ public class VertragspartnerDaoSqlite implements IDao<Vertragspartner,String> {
 
     @Override
     public List<Vertragspartner> readAll() throws DaoException {
-        return null;
+        ResultSet resultSet;
+        PreparedStatement statement;
+        List<Vertragspartner> vertragspartners = new ArrayList<>();
+
+        try {
+            connectionManager.getNewConnection();
+            String sql = "SELECT * FROM Vertragspartner";
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                String ausweisNr = resultSet.getString("ausweisNr");
+                String vorname = resultSet.getString("vorname");
+                String nachname = resultSet.getString("nachname");
+
+                String strasse = resultSet.getString("strasse");
+                String hausNr = resultSet.getString("hausNr");
+                String plz = resultSet.getString("plz");
+                String ort = resultSet.getString("ort");
+
+                Adresse adresse = new Adresse(strasse, hausNr, plz, ort);
+
+                Vertragspartner vertragspartner = new Vertragspartner(vorname,nachname,ausweisNr,adresse);
+
+                vertragspartners.add(vertragspartner);
+            }
+            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
+        } catch (SQLException | DaoException e) {
+            throw new DaoException(e.getMessage());
+        }
+        return vertragspartners;
     }
 
     @Override
