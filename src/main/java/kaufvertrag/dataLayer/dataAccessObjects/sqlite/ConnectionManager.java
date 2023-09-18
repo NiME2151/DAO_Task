@@ -64,25 +64,30 @@ public class ConnectionManager {
         return existingConnection;
     }
 
-    public void close(ResultSet resultSet, Statement statement, Connection connection) throws DaoException {
+    public void close(ResultSet resultSet, Statement statement) throws DaoException {
         try {
             resultSet.close();
+            close(statement);
         } catch (Exception e) {
             throw new DaoException(e.getMessage());
-        } finally {
-            try {
-                statement.close();
-            } catch (Exception e) {
-                throw new DaoException(e.getMessage());
-            }
+        }
+    }
 
-            try {
-                connection.close();
-            } catch (Exception e) {
-                throw new DaoException(e.getMessage());
-            }
-            existingConnection = null;
+    public void close(Statement statement) throws DaoException {
+        try {
+            statement.close();
+            close();
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+    }
+
+    public void close() throws DaoException {
+        try {
+            existingConnection.close();
             classLoaded = false;
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
         }
     }
 }

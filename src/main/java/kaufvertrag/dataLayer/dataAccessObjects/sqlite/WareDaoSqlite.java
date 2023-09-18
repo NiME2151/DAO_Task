@@ -23,9 +23,6 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
         PreparedStatement statement;
 
         try {
-            connectionManager.getNewConnection();
-            Connection connection = connectionManager.getExistingConnection();
-
             long id = objectToInsert.getId();
             String bezeichnung = objectToInsert.getBezeichnung();
             String beschreibung = objectToInsert.getBeschreibung();
@@ -33,8 +30,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             String besonderheiten = objectToInsert.getBesonderheiten().toString();
             String maengel = objectToInsert.getMaengel().toString();
 
+            connectionManager.getNewConnection();
+
             String sql = "INSERT INTO Ware (bezeichnung, beschreibung, preis, besonderheiten, maengel, id) VALUES (?,?,?,?,?,?)";
-            statement = connection.prepareStatement(sql);
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
             statement.setString(1, bezeichnung);
             statement.setString(2, beschreibung);
             statement.setDouble(3, preis);
@@ -45,10 +44,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             if (rowsInserted > 0) {
                 System.out.println("Neue Ware hinzugefügt");
             }
-            connection.close();
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
+        connectionManager.close(statement);
     }
 
     @Override
@@ -70,11 +69,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
                     resultSet.getDouble("preis"),
                     getListFromSavedList(resultSet.getString("besonderheiten")),
                     getListFromSavedList(resultSet.getString("maengel")));
-            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
-
+        connectionManager.close(resultSet, statement);
         return ware;
     }
 
@@ -82,14 +80,14 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
     public List<Ware> readAll() throws DaoException {
 
         ResultSet resultSet;
-        PreparedStatement statement;
+        Statement statement;
         List<Ware> waren = new ArrayList<>();
 
         try {
             connectionManager.getNewConnection();
             String sql = "SELECT * FROM Ware";
-            statement = connectionManager.getExistingConnection().prepareStatement(sql);
-            resultSet = statement.executeQuery();
+            statement = connectionManager.getExistingConnection().createStatement();
+            resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
 
@@ -105,10 +103,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
                 waren.add(ware);
             }
-            connectionManager.close(resultSet, statement, connectionManager.getExistingConnection());
         } catch (SQLException | DaoException e) {
             throw new DaoException(e.getMessage());
         }
+        connectionManager.close(resultSet, statement);
         return waren;
     }
 
@@ -120,9 +118,10 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
     @Override
     public void update(Ware objectToUpdate) throws DaoException {
-        PreparedStatement statement;
+        Statement statement;
         try {
             connectionManager.getNewConnection();
+            statement = connectionManager.getExistingConnection().createStatement();
             Ware ware = read(objectToUpdate.getId());
             List<String> aenderungen = getUnterschiedeInWaren(ware, objectToUpdate);
 
@@ -139,26 +138,28 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
                 sql.append(aenderung);
                 i++;
             }
-            statement = connectionManager.getExistingConnection().prepareStatement(String.valueOf(sql));
-            statement.executeQuery();
+            sql.append(" WHERE id = ").append(objectToUpdate.getId());
+            statement.executeUpdate(String.valueOf(sql));
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
+        connectionManager.close(statement);
     }
 
 
     @Override
     public void delete(Long id) throws DaoException {
-        PreparedStatement statement;
+        Statement statement;
         try {
             connectionManager.getNewConnection();
 
             String sql = "DELETE FROM Ware WHERE id = " + id;
-            statement = connectionManager.getExistingConnection().prepareStatement(sql);
-            statement.executeUpdate();
+            statement = connectionManager.getExistingConnection().createStatement();
+            statement.executeUpdate(sql);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
+        connectionManager.close(statement);
     }
 
     private List<String> getUnterschiedeInWaren(Ware ware, Ware objectToUpdate) {
@@ -168,13 +169,13 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
             return unterschiede;
         }
         if (!ware.getBeschreibung().equals(objectToUpdate.getBeschreibung())) {
-            unterschiede.add("beschreibung =" + objectToUpdate.getBeschreibung());
+            unterschiede.add("beschreibung = '" + objectToUpdate.getBeschreibung() + "'");
         }
         if (!ware.getBezeichnung().equals(objectToUpdate.getBezeichnung())) {
-            unterschiede.add("bezeichnung =" + objectToUpdate.getBezeichnung());
+            unterschiede.add("bezeichnung = '" + objectToUpdate.getBezeichnung() + "'");
         }
         if (!(ware.getPreis() == objectToUpdate.getPreis())) {
-            unterschiede.add("preis =" + objectToUpdate.getPreis());
+            unterschiede.add("preis = '" + objectToUpdate.getPreis() + "'");
         }
         return unterschiede;
     }

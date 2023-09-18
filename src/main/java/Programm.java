@@ -210,11 +210,10 @@ public class Programm {
     private static void updateWare(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IDao<Ware, Long> wareDao = getWareDao(dataLayer);
         Ware wareToUpdate = wareDao.read(askId(scanner));
-        System.out.println(wareToUpdate.toString() + "\n\nWelche Information soll geupdated werden?\n\t1. Bezeichnung\n\t2. Beschreibung\n\t3. Preis\n\t4. ID\n\tAbbrechen \"Q\"");
-        String option = scanner.next().toLowerCase();
         boolean isFinished;
         do {
-            switch (option) {
+            System.out.println(wareToUpdate.toString() + "\n\nWelche Information soll geupdated werden?\n\t1. Bezeichnung\n\t2. Beschreibung\n\t3. Preis\n\tAbbrechen \"Q\"");
+            switch (scanner.next().toLowerCase()) {
                 case "1" -> {
                     System.out.println("Neue Bezeichung:");
                     scanner.nextLine();
@@ -239,54 +238,48 @@ public class Programm {
                 default -> printInvalidInput();
             }
 
-            System.out.println("Aktualisierte Ware:\n\n" + wareToUpdate + "\n");
             System.out.println("Eine weitere Information bearbeiten?\nJa \"y\"\tNein \"n\"");
             isFinished = !scanner.next().equalsIgnoreCase("y");
         } while (!isFinished);
         wareDao.update(wareToUpdate);
+        System.out.println("Aktualisierte Ware:\n\n" + wareToUpdate + "\n");
     }
 
     private static void updateVertragsparnter(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         IDao<Vertragspartner, String> vertragspartnerDao = getVertragspartnerDao(dataLayer);
         Vertragspartner vertragspartnerToUpdate = vertragspartnerDao.read(askAusweisNr(scanner));
         Adresse adresseToUpdate = vertragspartnerToUpdate.getAdresse();
-        System.out.println(vertragspartnerToUpdate + "\n\nWelche Information soll geupdated werden?\n\t1. Ausweisnummer\n\t2. Vorname\n\t3. Nachname\n\t4. Straße\n\t5. Hausnummer\n\t6. Postleitzahl\n\t7. Ort\n\tAbbrechen \"Q\"");
-        String option = scanner.next().toLowerCase();
         boolean finishedInput;
         do {
-            switch (option) {
+            System.out.println(vertragspartnerToUpdate + "\n\nWelche Information soll geupdated werden?\n\t1. Vorname\n\t2. Nachname\n\t3. Straße\n\t4. Hausnummer\n\t5. Postleitzahl\n\t6. Ort\n\tAbbrechen \"Q\"");
+            switch (scanner.next().toLowerCase()) {
                 case "1" -> {
-                    System.out.println("Neue Ausweisnummer:");
-                    String ausweisNr = scanner.next();
-                    vertragspartnerToUpdate.setAusweisNr(ausweisNr);
-                }
-                case "2" -> {
                     System.out.println("Neuer Vorname:");
                     String vorname = scanner.next();
                     vertragspartnerToUpdate.setVorname(vorname);
 
                 }
-                case "3" -> {
+                case "2" -> {
                     System.out.println("Neuer Nachname:");
                     String nachname = scanner.next();
                     vertragspartnerToUpdate.setNachname(nachname);
                 }
-                case "4" -> {
+                case "3" -> {
                     System.out.println("Neue Straße:");
                     String strasse = scanner.next();
                     adresseToUpdate.setStrasse(strasse);
                 }
-                case "5" -> {
+                case "4" -> {
                     System.out.println("Neue Hausnummer:");
                     String hausNr = scanner.next();
                     adresseToUpdate.setHausNr(hausNr);
                 }
-                case "6" -> {
+                case "5" -> {
                     System.out.println("Neue Postleitzahl:");
                     String plz = scanner.next();
                     adresseToUpdate.setPlz(plz);
                 }
-                case "7" -> {
+                case "6" -> {
                     System.out.println("Neuer Ort:");
                     String nachname = scanner.next();
                     adresseToUpdate.setOrt(nachname);
@@ -297,13 +290,11 @@ public class Programm {
                 default -> printInvalidInput();
             }
             vertragspartnerToUpdate.setAdresse(adresseToUpdate);
-            System.out.println("Aktualisierter Vertragspartner:\n\n" + vertragspartnerToUpdate + "\n");
             System.out.println("Eine weitere Information bearbeiten?\nJa \"y\"\tNein \"n\"");
             finishedInput = !scanner.next().equalsIgnoreCase("y");
         } while (!finishedInput);
-
-
         vertragspartnerDao.update(vertragspartnerToUpdate);
+        System.out.println("Aktualisierter Vertragspartner:\n\n" + vertragspartnerToUpdate + "\n");
     }
 
     private static double getPreis(Scanner scanner) {
