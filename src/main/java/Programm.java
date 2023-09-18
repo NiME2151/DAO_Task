@@ -122,7 +122,7 @@ public class Programm {
         }
     }
 
-    private static void delete(Scanner scanner, IDataLayer dataLayer) {
+    private static void delete(Scanner scanner, IDataLayer dataLayer) throws DaoException {
         while (true) {
             System.out.println("Was soll gelöscht werden?\n\tWare \"W\"\n\tVertragspartner \"V\"\n\tAbbrechen\"Q\"");
             switch (scanner.next().toLowerCase()) {

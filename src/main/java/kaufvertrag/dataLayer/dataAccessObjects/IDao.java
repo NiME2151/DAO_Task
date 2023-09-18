@@ -11,5 +11,5 @@ public interface IDao<T, K> {
     T read(K id) throws DaoException;
     List<T> readAll() throws DaoException;
     void update(T objectToUpdate) throws DaoException;
-    void delete(K id);
+    void delete(K id) throws DaoException;
 }

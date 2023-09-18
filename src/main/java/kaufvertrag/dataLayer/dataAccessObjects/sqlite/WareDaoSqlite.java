@@ -148,8 +148,17 @@ public class WareDaoSqlite implements IDao<Ware, Long> {
 
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id) throws DaoException {
+        PreparedStatement statement;
+        try {
+            connectionManager.getNewConnection();
 
+            String sql = "DELETE FROM Ware WHERE id = " + id;
+            statement = connectionManager.getExistingConnection().prepareStatement(sql);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException(e.getMessage());
+        }
     }
 
     private List<String> getUnterschiedeInWaren(Ware ware, Ware objectToUpdate) {
