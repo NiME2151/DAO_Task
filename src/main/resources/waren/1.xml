@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ware>
+    <besonderheiten>
+        <besonderheit>1</besonderheit>
+    </besonderheiten>
+    <maengel>
+        <mangel>1</mangel>
+    </maengel>
+    <beschreibung>1</beschreibung>
+    <bezeichnung>1</bezeichnung>
+    <id>1</id>
+    <preis>1.0</preis>
+</ware>

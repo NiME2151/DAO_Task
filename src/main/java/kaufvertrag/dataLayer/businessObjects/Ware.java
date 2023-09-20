@@ -1,5 +1,6 @@
 package kaufvertrag.dataLayer.businessObjects;
 
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import kaufvertrag.businessObjects.IWare;
@@ -15,8 +16,10 @@ public class Ware implements IWare {
     private String beschreibung;
     private double preis;
     @XmlElementWrapper(name = "besonderheiten")
+    @XmlElement(name = "besonderheit")
     private List<String> besonderheiten = new ArrayList<>();
     @XmlElementWrapper(name = "maengel")
+    @XmlElement(name = "mangel")
     private List<String> maengel = new ArrayList<>();
 
     //noArgs Konstruktor, damit xml geschrieben werden kann; wirft sonst IllegalAnnotationException
