@@ -26,12 +26,12 @@ public class DataLayerManager {
         return switch (persistanceType) {
             case "xml" -> new DataLayerXml();
             case "sqlite" -> new DataLayerSqlite();
-            default -> throw new DaoException("persistence type not valid");
+            default -> throw new DaoException("Unbekannte Speicherart");
         };
     }
 
     private String readPersistenceType(Scanner scanner) {
-        System.out.println("Enter \"xml\" or \"sqlite\" as Persistance Type");
+        System.out.println("Entweder \"xml\" oder \"sqlite\" als Speicherart eingeben:");
         return scanner.nextLine();
     }
 }

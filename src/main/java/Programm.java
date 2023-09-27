@@ -18,9 +18,9 @@ public class Programm {
         IDataLayer dataLayer = dataLayerManager.getDataLayer();
         Scanner scanner = new Scanner(System.in);
         do {
-            System.out.println("Möchten Sie Vertragspartner/Ware:\n\terstellen? \"C\"\n\tlesen? \"R\"\n\tupdaten? \"U\"\n\tlöschen? \"D\"\n\tBeenden \"Q\"");
+            System.out.println("Möchten Sie Vertragspartner/Ware:\n\terstellen? \"c\"\n\tlesen? \"r\"\n\tupdaten? \"u\"\n\tlöschen? \"d\"\n\tBeenden \"q\"");
             String chosenOption = scanner.next();
-            switch (chosenOption) {
+            switch (chosenOption.toLowerCase()) {
                 case "c" -> create(scanner, dataLayer);
                 case "r" -> read(scanner, dataLayer);
                 case "u" -> update(scanner, dataLayer);
