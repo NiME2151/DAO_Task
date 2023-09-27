@@ -20,8 +20,7 @@ public class VertragspartnerDaoSqlite implements IDao<Vertragspartner, String> {
 
     @Override
     public void create(Vertragspartner vertragspartner) throws DaoException {
-        PreparedStatement statement;
-
+        
         try {
             connectionManager.getNewConnection();
 
@@ -107,9 +106,7 @@ public class VertragspartnerDaoSqlite implements IDao<Vertragspartner, String> {
 
         return vertragspartner;
     }
-
     
-    //// AHHHHHH Adresse!
     @Override
     public void update(Vertragspartner vertragspartnerToUpdate) throws DaoException {
         Statement statement;
@@ -117,94 +114,110 @@ public class VertragspartnerDaoSqlite implements IDao<Vertragspartner, String> {
             connectionManager.getNewConnection();
             statement = connectionManager.getExistingConnection().createStatement();
             Vertragspartner vertragspartner = read(vertragspartnerToUpdate.getAusweisNr());
-            List<String> aenderungen = getUnterschiedeInVertragspartner(vertragspartner, vertragspartnerToUpdate);
+            List<String> aenderungenVertragspartner = getUnterschiedeInVertragspartner(vertragspartner, vertragspartnerToUpdate);
+            List<String> aenderungenAdresse = getUnterschiedeInAdresse(vertragspartner.getAdresse(), vertragspartnerToUpdate.getAdresse());
 
-            if (aenderungen.isEmpty()) {
+            
+            if (aenderungenVertragspartner.isEmpty() && aenderungenAdresse.isEmpty()) {
                 return;
             }
-
-            StringBuilder sql = new StringBuilder("UPDATE Vertragspartner SET ");
-            int i = 0;
-            for (String aenderung : aenderungen) {
-                if (i > 0) {
-                    sql.append(", ");
+            if (!aenderungenVertragspartner.isEmpty()){
+                StringBuilder sql = new StringBuilder("UPDATE Vertragspartner SET ");
+                int i = 0;
+                for (String aenderung : aenderungenVertragspartner) {
+                    if (i > 0) {
+                        sql.append(", ");
+                    }
+                    sql.append(aenderung);
+                    i++;
                 }
-                sql.append(aenderung);
-                i++;
+                sql.append("WHERE ausweisNr = ").append(vertragspartnerToUpdate.getAusweisNr());
+                statement.executeUpdate(String.valueOf(sql));
             }
-            sql.append("WHERE ausweisNr = ").append(vertragspartnerToUpdate.getAusweisNr());
-            statement.executeUpdate(String.valueOf(sql));
+            if (!aenderungenAdresse.isEmpty()){
+                String ausweisNr = vertragspartnerToUpdate.getAusweisNr();
+                String sqlAdressId = "SELECT adressId FROM Vertragspartner WHERE ausweisNr = " + ausweisNr;
+                statement = connectionManager.getExistingConnection().createStatement();
+                ResultSet resultSet = statement.executeQuery(sqlAdressId);
+                int adressId = resultSet.getInt("adressId");
+                
+                StringBuilder sql = new StringBuilder("UPDATE Adressen SET ");
+                int i = 0;
+                for (String aenderung : aenderungenAdresse) {
+                    if (i > 0) {
+                        sql.append(", ");
+                    }
+                    sql.append(aenderung);
+                    i++;
+                }
+                sql.append("WHERE adressId = ").append(adressId);
+                statement.executeUpdate(String.valueOf(sql));
+            }
+
+            
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());
         }
         connectionManager.close(statement);
     }
-
+    
     @Override
     public void delete(String id) throws DaoException {
+        
         Statement statement;
-        ResultSet resultSet;
         Statement statementAdresse;
         try {
             connectionManager.getNewConnection();
+            
             String adressSQL = "GET adresseId FROM Vertragspartner WHERE ausweisNr =" + id;
             statementAdresse = connectionManager.getExistingConnection().createStatement();
             int adresseId = statementAdresse.executeUpdate(adressSQL);
+      
+            String VpSQL = "DELETE FROM Vertragspartner WHERE ausweisNr = " + id;
+            statement = connectionManager.getExistingConnection().createStatement();
+            statement.executeUpdate(VpSQL);
             
             String deleteAdressSQL = "DELETE FROM Adresse WHERE adressID = " + adresseId;
-            String sql = "DELETE FROM Vertragspartner WHERE ausweisNr = " + id;
             statement = connectionManager.getExistingConnection().createStatement();
             statement.executeUpdate(deleteAdressSQL);
         } catch (SQLException e) {
-            throw new DaoException("Problem beim löschen der Adresse");
-        };
-        
-        try {
-            connectionManager.getNewConnection();
-            String adressSQL = "GET adresseId FROM Vertragspartner WHERE ausweisNr =" + id;
-            statementAdresse = connectionManager.getExistingConnection().createStatement();
-            int adresseId = statementAdresse.executeUpdate(adressSQL);
-
-            String deleteAdressSQL = "DELETE FROM Adresse WHERE adressID = " + adresseId;
-            String sql = "DELETE FROM Vertragspartner WHERE ausweisNr = " + id;
-            statement = connectionManager.getExistingConnection().createStatement();
-            statement.executeUpdate(deleteAdressSQL);
-        } catch (SQLException e) {
-            throw new DaoException("Problem beim löschen der Adresse");
+            throw new DaoException("Problem beim löschen aufgetreten.");
         }
         connectionManager.close(statement);
 
     }
 
     private List<String> getUnterschiedeInVertragspartner(Vertragspartner vertragspartner, Vertragspartner objectToUpdate) {
-        List<String> unterschiede = new ArrayList<>();
-        Adresse adresse = vertragspartner.getAdresse();
-        Adresse adresseToUpdate = objectToUpdate.getAdresse();
-
-        if (vertragspartner.equals(objectToUpdate)) {
-            return unterschiede;
-        }
+        List<String> vertragspartnerUnterschiede = new ArrayList<>();
+        
         if (!vertragspartner.getVorname().equals(objectToUpdate.getVorname())) {
-            unterschiede.add("vorname = '" + objectToUpdate.getVorname() + "'");
+            vertragspartnerUnterschiede.add("vorname = '" + objectToUpdate.getVorname() + "'");
         }
         if (!vertragspartner.getNachname().equals(objectToUpdate.getNachname())) {
-            unterschiede.add("nachname = '" + objectToUpdate.getNachname() + "'");
+            vertragspartnerUnterschiede.add("nachname = '" + objectToUpdate.getNachname() + "'");
         }
+        
+        return vertragspartnerUnterschiede;
+    }
+
+    private List<String> getUnterschiedeInAdresse(Adresse adresse, Adresse adresseToUpdate) {
+        List<String> adresseUnterschiede = new ArrayList<>();
+        
         if (!adresse.getHausNr().equals(adresseToUpdate.getHausNr())) {
-            unterschiede.add("hausNr = '" + adresseToUpdate.getHausNr() + "'");
+            adresseUnterschiede.add("hausNr = '" + adresseToUpdate.getHausNr() + "'");
         }
         if (!adresse.getStrasse().equals(adresseToUpdate.getStrasse())) {
-            unterschiede.add("strasse = '" + adresseToUpdate.getStrasse() + "'");
+            adresseUnterschiede.add("strasse = '" + adresseToUpdate.getStrasse() + "'");
         }
         if (!adresse.getOrt().equals(adresseToUpdate.getOrt())) {
-            unterschiede.add("ort = '" + adresseToUpdate.getOrt() + "'");
+            adresseUnterschiede.add("ort = '" + adresseToUpdate.getOrt() + "'");
         }
         if (!adresse.getPlz().equals(adresseToUpdate.getPlz())) {
-            unterschiede.add("plz = '" + adresseToUpdate.getPlz() + "'");
+            adresseUnterschiede.add("plz = '" + adresseToUpdate.getPlz() + "'");
         }
-
-        return unterschiede;
+        return adresseUnterschiede;
     }
+
     private Vertragspartner getVertragsparterWithAdress(ResultSet resultSet, ConnectionManager connectionManager) throws SQLException, DaoException {
         String ausweisNr = resultSet.getString("ausweisNr");
         String vorname = resultSet.getString("vorname");
