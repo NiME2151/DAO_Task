@@ -7,7 +7,7 @@ import java.sql.*;
 public class ConnectionManager {
 
     private final String CLASSNAME = "org.sqlite.JDBC";
-    private static final String CONNECTIONSTRING = "jdbc:sqlite:C:../DAO_Task/database.db";
+    private static final String CONNECTIONSTRING = "jdbc:sqlite:database.db";
     private static Connection existingConnection;
     private static boolean classLoaded = false;
 
@@ -40,19 +40,26 @@ public class ConnectionManager {
                 besonderheiten TEXT
                 );""";
 
-        String createVertragspartnerTableIfNotExists = """
-                CREATE TABLE IF NOT EXISTS Vertragspartner(
-                ausweisNr VARCHAR(50) NOT NULL,
-                vorname VARCHAR(50),
-                nachname VARCHAR(50),
+        String createAdressenTableIfNotExists = """
+                CREATE TABLE IF NOT EXISTS Adressen(
+                id INTEGER NOT NULL,
                 strasse VARCHAR(50),
                 hausNr VARCHAR(50),
                 plz VARCHAR(50),
                 ort VARCHAR(50)
                 );""";
 
+        String createVertragspartnerTableIfNotExists = """
+                CREATE TABLE IF NOT EXISTS Vertragspartner(
+                ausweisNr VARCHAR(50) NOT NULL,
+                vorname VARCHAR(50),
+                nachname VARCHAR(50),
+                adresseId VARCHAR(255) REFERENCES Adressen(id)
+                );""";
+
         try {
             existingConnection.createStatement().execute(createWareTableIfNotExists);
+            existingConnection.createStatement().execute(createAdressenTableIfNotExists);
             existingConnection.createStatement().execute(createVertragspartnerTableIfNotExists);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage());

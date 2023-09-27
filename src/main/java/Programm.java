@@ -34,10 +34,9 @@ public class Programm {
     }
 
     private static void create(Scanner scanner, IDataLayer dataLayer) throws DaoException {
-        //Abfrage was hinzugefügt werden soll -> Vertragspartner oder Ware
+        
         System.out.println("Was möchten Sie erstellen?\n\tVertragspartner \"V\"\n\tWare \"W\"\n\tAbbrechen \"Q\"");
-
-        //Mit scanner auslesen was Antwort ist und entsprechend reagieren
+        
         while (true) {
             switch (scanner.next().toLowerCase()) {
                 case "w" -> {
@@ -65,7 +64,6 @@ public class Programm {
         System.out.println("Nachname:");
         String nachname = scanner.next();
         System.out.println("Strasse:");
-        //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
         scanner.nextLine();
         String strasse = scanner.nextLine();
         System.out.println("HausNr:");
@@ -88,7 +86,6 @@ public class Programm {
         long id = askId(scanner);
 
         System.out.println("Bezeichnung:");
-        //next Line konsumiert die neue Zeile die ausgegeben wird mit println, damit ein neuer Zeileninput eingegeben werden kann
         scanner.nextLine();
         String bezeichnung = scanner.nextLine();
         System.out.println("Beschreibung:");
